@@ -9,7 +9,7 @@ import asyncio
 import os
 import sys
 from contextlib import asynccontextmanager
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
@@ -84,6 +84,8 @@ def _run_scrape_sync(source: str, query: Optional[str]) -> dict:
             )
             return {"status": "ok", "jobs_scraped": scraped, "jobs_new": new, "run_id": run_id}
         except Exception as e:  # noqa: BLE001
+            import traceback
+            traceback.print_exc()
             jobs_service.finish_scrape_run(
                 conn, run_id, status="failed", jobs_scraped=0, jobs_new=0, error=str(e)
             )
@@ -200,8 +202,8 @@ async def refresh(source: str = Query("indeed"), query: Optional[str] = Query(No
         "status": result["status"],
         "source": source,
         "query": query,
-        "started_at": datetime.utcnow().isoformat(),
-        "finished_at": datetime.utcnow().isoformat(),
+        "started_at": datetime.now(timezone.utc).isoformat(),
+        "finished_at": datetime.now(timezone.utc).isoformat(),
         "jobs_scraped": result["jobs_scraped"],
         "jobs_new": result["jobs_new"],
         "error_message": None,

@@ -1,7 +1,15 @@
-# Day 2 Session Logs
+# PulseHire Session Logs
 
 Per-day notes on what was built, why, and what to do next. Share these with NotebookLM (or any other AI) to bring them up to speed quickly.
 
-- [Day 2 — Backend](DAY-2-BACKEND.md) — Full FastAPI backend built end-to-end. 13/13 endpoint tests pass. Sample data live. Real scraper pending Bright Data key.
-- [Day 3 — Frontend](DAY-3-FRONTEND.md) — React + Vite + Tailwind + Recharts dashboard. 5 components built, full stack runs end-to-end. Screenshot + demo script still to do.
-- [Ollama → Bright Data Handoff](OLLAMA-TO-BRIGHT-DATA-HANDOFF.md) — Credit-saving plan: thinking → NotebookLM, fetching → Bright Data, coding → Claude.
+## Timeline
+
+- [Day 1 — Design](../../PRD.md) | [Architecture](../../ARCHITECTURE.md) | [Database](../../DATABASE.md) | [Security](../../SECURITY.md) — PRD, architecture, schema, security guidelines, README.
+- [Day 2 — Backend](DAY-2-BACKEND.md) — Full FastAPI backend built end-to-end. 13/13 endpoint tests pass. 500 sample jobs seeded. 34 skills loaded.
+- [Day 3 — Frontend](DAY-3-FRONTEND.md) — React + Vite + Tailwind + Recharts dashboard. 5 components built, full stack runs end-to-end.
+- [Day 4 — Scraper + UI Polish](DAY-4-SCRAPER-AND-POLISH.md) — Real Indeed scraper via Bright Data Web Unlocker. Full UI overhaul for Best UI track. 54+ real jobs scraped.
+
+## Supplementary docs
+
+- [Ollama → Bright Data Handoff](OLLAMA-TO-BRIGHT-DATA-HANDOFF.md) — Credit-saving plan from earlier in the hackathon.
+- [NotebookLM Sync — End of Day 3](NOTEBOOKLM-SYNC-DAY-3.md) — Summary file for pasting into NotebookLM.

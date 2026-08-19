@@ -11,9 +11,42 @@ import {
 } from 'recharts'
 import { getTopSkills } from '../api'
 
-// Emerging skills get an indigo highlight; mature ones stay neutral.
-function colorFor(skill) {
-  return skill.is_emerging ? '#818cf8' : '#64748b'
+// Color palette: emerging = indigo gradient, mature = slate gradient
+const COLORS = {
+  emerging: ['#818cf8', '#6366f1'],
+  mature:   ['#475569', '#334155'],
+}
+
+function barFill(skill, index) {
+  return skill.is_emerging ? COLORS.emerging[0] : COLORS.mature[index % 2 === 0 ? 0 : 1]
+}
+
+function SkeletonLoader() {
+  return (
+    <div className="space-y-3 py-4">
+      {[...Array(8)].map((_, i) => (
+        <div key={i} className="flex items-center gap-3">
+          <div className="skeleton h-4 w-20 rounded" />
+          <div className="skeleton h-6 flex-1 rounded-md" style={{ width: `${60 - i * 5}%` }} />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function CustomTooltip({ active, payload, label }) {
+  if (!active || !payload?.length) return null
+  const data = payload[0].payload
+  return (
+    <div className="rounded-lg bg-slate-800/95 border border-slate-700/50 backdrop-blur-sm px-3 py-2 shadow-xl">
+      <p className="text-sm font-medium text-slate-100">{label}</p>
+      <p className="text-xs text-slate-400 mt-0.5">
+        <span className="text-indigo-400 font-semibold">{data.count}</span> mentions
+        {data.is_emerging && <span className="ml-1.5 text-indigo-300">✨ emerging</span>}
+      </p>
+      <p className="text-[10px] text-slate-500 mt-0.5">{data.category}</p>
+    </div>
+  )
 }
 
 export default function TopSkillsChart({ days = 30, source }) {
@@ -35,45 +68,68 @@ export default function TopSkillsChart({ days = 30, source }) {
       .finally(() => {
         if (!cancelled) setLoading(false)
       })
-    return () => {
-      cancelled = true
-    }
+    return () => { cancelled = true }
   }, [days, source])
 
-  if (loading) {
-    return <div className="h-80 flex items-center justify-center text-slate-400">Loading top skills…</div>
-  }
+  if (loading) return <SkeletonLoader />
+
   if (error) {
-    return <div className="h-80 flex items-center justify-center text-rose-400">⚠ {error}</div>
+    return (
+      <div className="h-80 flex flex-col items-center justify-center gap-2">
+        <span className="text-2xl">⚠️</span>
+        <span className="text-sm text-rose-400">{error}</span>
+      </div>
+    )
   }
+
   if (!data.length) {
-    return <div className="h-80 flex items-center justify-center text-slate-500">No data yet.</div>
+    return (
+      <div className="h-80 flex flex-col items-center justify-center gap-2">
+        <span className="text-2xl">📭</span>
+        <span className="text-sm text-slate-500">No data yet. Try refreshing!</span>
+      </div>
+    )
   }
 
   return (
-    <ResponsiveContainer width="100%" height={320}>
-      <BarChart data={data} layout="vertical" margin={{ top: 8, right: 24, left: 8, bottom: 8 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-        <XAxis type="number" stroke="#94a3b8" tick={{ fontSize: 12 }} />
+    <ResponsiveContainer width="100%" height={340}>
+      <BarChart
+        data={data}
+        layout="vertical"
+        margin={{ top: 4, right: 24, left: 4, bottom: 4 }}
+        barCategoryGap="20%"
+      >
+        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" horizontal={false} />
+        <XAxis
+          type="number"
+          stroke="#475569"
+          tick={{ fontSize: 11, fill: '#94a3b8' }}
+          axisLine={false}
+          tickLine={false}
+        />
         <YAxis
           type="category"
           dataKey="skill"
-          stroke="#94a3b8"
-          tick={{ fontSize: 12 }}
-          width={110}
+          stroke="#475569"
+          tick={{ fontSize: 12, fill: '#cbd5e1' }}
+          width={100}
+          axisLine={false}
+          tickLine={false}
         />
-        <Tooltip
-          contentStyle={{
-            backgroundColor: '#0f172a',
-            border: '1px solid #334155',
-            borderRadius: 8,
-            color: '#e2e8f0',
-          }}
-          formatter={(value) => [`${value} mentions`, 'Mentions']}
-        />
-        <Bar dataKey="count" radius={[0, 6, 6, 0]}>
-          {data.map((entry) => (
-            <Cell key={entry.skill_id} fill={colorFor(entry)} />
+        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(99, 102, 241, 0.05)' }} />
+        <Bar
+          dataKey="count"
+          radius={[0, 8, 8, 0]}
+          animationBegin={0}
+          animationDuration={800}
+          animationEasing="ease-out"
+        >
+          {data.map((entry, i) => (
+            <Cell
+              key={entry.skill_id}
+              fill={barFill(entry, i)}
+              className="transition-opacity duration-200 hover:opacity-80"
+            />
           ))}
         </Bar>
       </BarChart>

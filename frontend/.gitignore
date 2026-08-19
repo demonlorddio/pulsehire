@@ -1,0 +1,5 @@
+# Vite / React frontend
+node_modules/
+dist/
+.vite/
+*.local

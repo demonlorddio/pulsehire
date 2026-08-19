@@ -1,0 +1,77 @@
+[
+  {
+    "id": "sd_msz072m928ddqhbq36",
+    "created": "2026-08-18T18:36:01.665Z",
+    "dataset_id": "gd_l4dx9j9sscpvs7no2",
+    "discovery_collector_id": null,
+    "status": "running",
+    "inputs_count": 4,
+    "trigger": {
+      "type": "CP",
+      "user": "yashranadmt@gmail.com",
+      "ip": "49.36.177.218",
+      "trigger_url": "/trigger?customer=hl_9a0928ab&type=url_collection&dataset_id=gd_l4dx9j9sscpvs7no2&include_errors=true",
+      "hostname": "zs-www-dca-b2",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+      "ts": "2026-08-18T18:36:01.542Z"
+    },
+    "discover_only": false,
+    "dataset_size": 0,
+    "duration": null,
+    "duration_per_input": null,
+    "download_disabled_reason": "not_ready",
+    "has_custom_input": false,
+    "dataset_name": "Indeed job listings information",
+    "scraper_name": "Indeed job listings information - collect by URL"
+  },
+  {
+    "id": "sd_msz04miu28tb2bk2ii",
+    "created": "2026-08-18T18:34:07.494Z",
+    "dataset_id": "gd_l4dx9j9sscpvs7no2",
+    "discovery_collector_id": null,
+    "status": "running",
+    "inputs_count": 4,
+    "trigger": {
+      "type": "CP",
+      "user": "yashranadmt@gmail.com",
+      "ip": "49.36.177.218",
+      "trigger_url": "/trigger?customer=hl_9a0928ab&type=url_collection&dataset_id=gd_l4dx9j9sscpvs7no2&include_errors=true",
+      "hostname": "zs-www-dca-b",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+      "ts": "2026-08-18T18:34:07.348Z"
+    },
+    "discover_only": false,
+    "dataset_size": 0,
+    "duration": null,
+    "duration_per_input": null,
+    "download_disabled_reason": "not_ready",
+    "has_custom_input": false,
+    "dataset_name": "Indeed job listings information",
+    "scraper_name": "Indeed job listings information - collect by URL"
+  },
+  {
+    "id": "sd_msz047831mzibzrcw2",
+    "created": "2026-08-18T18:33:47.667Z",
+    "dataset_id": "gd_l4dx9j9sscpvs7no2",
+    "discovery_collector_id": null,
+    "status": "running",
+    "inputs_count": 4,
+    "trigger": {
+      "type": "CP",
+      "user": "yashranadmt@gmail.com",
+      "ip": "49.36.177.218",
+      "trigger_url": "/trigger?customer=hl_9a0928ab&type=url_collection&dataset_id=gd_l4dx9j9sscpvs7no2&include_errors=true",
+      "hostname": "zs-www-dca-b",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+      "ts": "2026-08-18T18:33:47.288Z"
+    },
+    "discover_only": false,
+    "dataset_size": 0,
+    "duration": null,
+    "duration_per_input": null,
+    "download_disabled_reason": "not_ready",
+    "has_custom_input": false,
+    "dataset_name": "Indeed job listings information",
+    "scraper_name": "Indeed job listings information - collect by URL"
+  }
+]

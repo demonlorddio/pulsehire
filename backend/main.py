@@ -74,7 +74,7 @@ def _run_scrape_sync(source: str, query: Optional[str]) -> dict:
                     continue
                 new += 1
                 # Extract skill mentions and bump daily counts.
-                day = datetime.utcnow().date().isoformat()
+                day = datetime.now(timezone.utc).date().isoformat()
                 text = f"{raw.get('title','')}\n{raw.get('description','')}"
                 for skill in extract_skill_ids(text, skills):
                     jobs_service.record_skill_mention(conn, job_id, skill["id"], mentioned_in="description")

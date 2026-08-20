@@ -59,7 +59,7 @@ def _fetch_via_brightdata(url: str) -> str:
         "format": "raw",
     }
 
-    resp = requests.post(BRIGHTDATA_ENDPOINT, json=payload, headers=auth_headers, timeout=60)
+    resp = requests.post(BRIGHTDATA_ENDPOINT, json=payload, headers=auth_headers, timeout=120)
     if not resp.ok:
         print(f"[indeed] Bright Data error {resp.status_code}: {resp.text[:500]}")
     resp.raise_for_status()
@@ -231,6 +231,10 @@ def scrape_indeed(
     dict
         {title, company, location, url, description, posted_date}
     """
+    # Default query when None is passed (frontend doesn't always send query).
+    if not query:
+        query = "software engineer"
+
     if not BRIGHTDATA_API_KEY:
         raise RuntimeError("BRIGHTDATA_API_KEY is not set in environment / .env")
     if not BRIGHTDATA_ZONE:

@@ -4,6 +4,7 @@ import SkillTrendChart from './SkillTrendChart'
 import FilterPanel from './FilterPanel'
 import RefreshButton from './RefreshButton'
 import { listSkills, getStats } from '../api'
+import JobList from './JobList'
 
 export default function Dashboard() {
   const [skills, setSkills] = useState([])
@@ -103,6 +104,11 @@ export default function Dashboard() {
         >
           <SkillTrendChart key={`trend-${skill}-${days}`} skill={skill} days={days} />
         </Card>
+      </section>
+
+      {/* ── Job Listings ──────────────────────────────────────────────── */}
+      <section className="mt-5 animate-fade-in-delay-2">
+        <JobList skill={skill} source={source} limit={10} />
       </section>
 
       {/* ── Footer ────────────────────────────────────────────────────── */}

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { triggerRefresh } from '../api'
 
-export default function RefreshButton({ onRefreshed }) {
+export default function RefreshButton({ onRefreshed, source = 'indeed' }) {
   const [state, setState] = useState('idle') // idle | loading | done | error
   const [message, setMessage] = useState('')
 
@@ -9,7 +9,7 @@ export default function RefreshButton({ onRefreshed }) {
     setState('loading')
     setMessage('')
     try {
-      const result = await triggerRefresh({ source: 'indeed' })
+      const result = await triggerRefresh({ source })
       setState('done')
       setMessage(
         result.jobs_new > 0
@@ -61,7 +61,7 @@ export default function RefreshButton({ onRefreshed }) {
         <span className={state === 'loading' ? 'animate-spin-slow' : ''}>
           {state === 'loading' ? '⟳' : state === 'done' ? '✓' : state === 'error' ? '✕' : '🔄'}
         </span>
-        {state === 'loading' ? 'Scraping Indeed…' : 'Refresh data'}
+        {state === 'loading' ? `Scraping ${source.charAt(0).toUpperCase() + source.slice(1)}…` : 'Refresh data'}
       </button>
       {message && (
         <span className={`text-xs max-w-xs ${msgClasses[state]}`}>

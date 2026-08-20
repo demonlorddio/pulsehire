@@ -27,6 +27,7 @@ load_dotenv(_PROJECT_ROOT / ".env")
 from database import db_session  # noqa: E402
 import services.skills_service as skills_service  # noqa: E402
 import services.jobs_service as jobs_service  # noqa: E402
+from scraper.registry import list_source_info  # noqa: E402
 from models import (  # noqa: E402
     Job, RefreshResponse, Skill, SkillTrend, StatsResponse, TopSkill, TrendPoint,
 )
@@ -41,13 +42,14 @@ def _run_scrape_sync(source: str, query: Optional[str]) -> dict:
     turn it into a 503 instead of a generic 500.
     """
     try:
-        from scraper.indeed import scrape_indeed
+        from scraper.registry import get_scraper
         from scraper.skills import extract_skill_ids
     except ImportError as e:
         raise RuntimeError(
-            "Scraper not implemented yet. Run seed_sample_data.py for demo data, "
-            "or implement backend/scraper/indeed.py."
+            "Scraper registry not found. Run seed_sample_data.py for demo data."
         ) from e
+
+    scrape_fn = get_scraper(source)
 
     with db_session() as conn:
         run_id = jobs_service.start_scrape_run(conn, source=source, query=query)
@@ -55,7 +57,7 @@ def _run_scrape_sync(source: str, query: Optional[str]) -> dict:
         skills_by_slug = {s["slug"]: dict(s) for s in skills}
 
         try:
-            jobs_iter = scrape_indeed(query=query)
+            jobs_iter = scrape_fn(query=query)
             scraped = 0
             new = 0
             for raw in jobs_iter:
@@ -179,6 +181,12 @@ def list_locations():
     return skills_service.list_locations()
 
 
+@app.get("/api/sources")
+def list_sources():
+    """Return all registered scraping sources."""
+    return list_source_info()
+
+
 @app.get("/api/stats", response_model=StatsResponse)
 def stats():
     return skills_service.stats()
@@ -186,7 +194,7 @@ def stats():
 
 @app.post("/api/refresh", response_model=RefreshResponse)
 async def refresh(source: str = Query("indeed"), query: Optional[str] = Query(None)):
-    """Trigger a fresh scrape. Runs synchronously in a thread so we don't block the event loop."""
+    """Trigger a fresh scrape for the given source (indeed, linkedin, glassdoor, etc.)."""
     if not os.getenv("BRIGHTDATA_API_KEY"):
         raise HTTPException(
             status_code=503,

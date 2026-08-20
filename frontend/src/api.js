@@ -40,14 +40,20 @@ export async function listLocations() {
   return data
 }
 
+export async function listSources() {
+  const { data } = await client.get('/api/sources')
+  return data
+}
+
 export async function getStats() {
   const { data } = await client.get('/api/stats')
   return data
 }
 
-export async function triggerRefresh({ source = 'indeed', query } = {}) {
+export async function triggerRefresh({ source, query } = {}) {
   const { data } = await client.post('/api/refresh', null, {
     params: { source, query },
+    timeout: 180_000,  // scraping can take 60+ seconds
   })
   return data
 }

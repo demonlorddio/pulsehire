@@ -106,3 +106,6 @@ Desktop.ini
 scraped_data/
 raw_html/
 *.html.bak
+
+# ----- Helper scripts (local only) -----
+scripts/

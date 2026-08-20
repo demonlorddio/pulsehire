@@ -1,3 +1,6 @@
+import { useEffect, useState } from 'react'
+import { listSources } from '../api'
+
 export default function FilterPanel({
   days,
   onDaysChange,
@@ -7,6 +10,11 @@ export default function FilterPanel({
   onSkillChange,
   skills,
 }) {
+  const [sources, setSources] = useState([])
+  useEffect(() => {
+    listSources().then(setSources).catch(() => {})
+  }, [])
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
       <SelectField
@@ -28,8 +36,7 @@ export default function FilterPanel({
         onChange={(v) => onSourceChange(v || null)}
         options={[
           { value: '', label: 'All sources' },
-          { value: 'indeed', label: 'Indeed' },
-          { value: 'naukri', label: 'Naukri' },
+          ...sources.map((s) => ({ value: s.slug, label: s.name })),
         ]}
       />
       <SelectField

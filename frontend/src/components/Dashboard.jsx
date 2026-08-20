@@ -85,7 +85,7 @@ export default function Dashboard() {
             />
           </div>
           <div className="sm:ml-auto">
-            <RefreshButton onRefreshed={() => setRefreshTick((n) => n + 1)} />
+            <RefreshButton onRefreshed={() => setRefreshTick((n) => n + 1)} source={source || 'indeed'} />
           </div>
         </div>
       </section>

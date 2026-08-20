@@ -33,7 +33,7 @@ class Job(BaseModel):
     source: str
     url: str
     description: Optional[str] = None
-    posted_date: Optional[date] = None
+    posted_date: Optional[str] = None
     scraped_at: datetime
     is_active: bool
 

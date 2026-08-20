@@ -30,5 +30,6 @@ def _load_all():
     import scraper.remoteok
     import scraper.simplyhired
     import scraper.wellfound
+    import scraper.naukri
 
 _load_all()

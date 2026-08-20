@@ -62,7 +62,7 @@ def top_skills(limit: int = 10, days: int = 30, source: Optional[str] = None) ->
         return conn.execute(sql, params).fetchall()
 
 
-def skill_trend(slug: str, days: int = 30) -> Optional[dict]:
+def skill_trend(slug: str, days: int = 30, source: Optional[str] = None) -> Optional[dict]:
     """Daily count series for a skill over the last `days` days.
 
     Returns {skill, slug, points: [{date, count}, ...]} or None if skill unknown.
@@ -72,16 +72,17 @@ def skill_trend(slug: str, days: int = 30) -> Optional[dict]:
         skill = conn.execute("SELECT id, name, slug FROM skills WHERE slug = ?", (slug,)).fetchone()
         if not skill:
             return None
-        rows = conn.execute(
-            """
+        sql = """
             SELECT date, SUM(count) AS count
             FROM daily_skill_counts
             WHERE skill_id = ? AND date >= DATE('now', ?)
-            GROUP BY date
-            ORDER BY date
-            """,
-            (skill["id"], f"-{days} days"),
-        ).fetchall()
+        """
+        params: list = [skill["id"], f"-{days} days"]
+        if source:
+            sql += " AND source = ?"
+            params.append(source)
+        sql += " GROUP BY date ORDER BY date"
+        rows = conn.execute(sql, params).fetchall()
 
     # Build a dense series so the chart is continuous.
     by_date = {row["date"]: row["count"] for row in rows}

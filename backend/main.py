@@ -154,8 +154,9 @@ def top_skills(
 def skill_trend(
     skill: str = Query(..., description="Skill slug, e.g. 'rust'"),
     days: int = Query(30, ge=1, le=365),
+    source: str = Query(None, description="Filter by source slug"),
 ):
-    result = skills_service.skill_trend(slug=skill, days=days)
+    result = skills_service.skill_trend(slug=skill, days=days, source=source)
     if result is None:
         raise HTTPException(status_code=404, detail=f"Unknown skill: {skill!r}")
     return {

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { triggerRefresh } from '../api'
 
 export default function RefreshButton({ onRefreshed, source = 'indeed' }) {
-  const [state, setState] = useState('idle') // idle | loading | done | error
+  const [state, setState] = useState('idle')
   const [message, setMessage] = useState('')
 
   async function handleClick() {
@@ -13,37 +13,16 @@ export default function RefreshButton({ onRefreshed, source = 'indeed' }) {
       setState('done')
       setMessage(
         result.jobs_new > 0
-          ? `✓ Scraped ${result.jobs_scraped} jobs (${result.jobs_new} new)`
-          : `✓ Checked ${result.jobs_scraped} jobs (no new results)`
+          ? `${result.jobs_scraped} scraped, ${result.jobs_new} new`
+          : `${result.jobs_scraped} checked, no new`
       )
       onRefreshed?.()
-      // Reset to idle after 4 seconds
       setTimeout(() => setState('idle'), 4000)
     } catch (e) {
       setState('error')
-      const status = e?.response?.status
-      const detail = e?.response?.data?.detail
-      if (status === 503) {
-        setMessage(detail || 'Scraper not configured (sample data still works).')
-      } else {
-        setMessage(e.message || 'Refresh failed. Check backend server.')
-      }
+      setMessage(e?.response?.data?.detail || e.message || 'Failed')
       setTimeout(() => setState('idle'), 6000)
     }
-  }
-
-  const btnClasses = {
-    idle:    'bg-slate-800 border-slate-700/50 text-slate-200 hover:bg-slate-700/80 hover:border-slate-600',
-    loading: 'bg-indigo-500/10 border-indigo-500/30 text-indigo-300',
-    done:    'bg-emerald-500/10 border-emerald-500/30 text-emerald-300',
-    error:   'bg-rose-500/10 border-rose-500/30 text-rose-300',
-  }
-
-  const msgClasses = {
-    idle:    'text-slate-500',
-    loading: 'text-indigo-400',
-    done:    'text-emerald-400',
-    error:   'text-rose-400',
   }
 
   return (
@@ -53,18 +32,26 @@ export default function RefreshButton({ onRefreshed, source = 'indeed' }) {
         onClick={handleClick}
         disabled={state === 'loading'}
         className={`
-          inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium
-          transition-all duration-200 disabled:opacity-70
-          ${btnClasses[state]}
+          inline-flex items-center gap-2 rounded px-4 py-1.5 text-xs font-medium font-mono
+          transition-colors duration-150 disabled:opacity-60 border
+          ${state === 'idle' ? 'bg-surface-2 border-surface-3 text-zinc-300 hover:bg-surface-3 hover:text-zinc-100' : ''}
+          ${state === 'loading' ? 'bg-surface-2 border-accent/30 text-accent' : ''}
+          ${state === 'done' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : ''}
+          ${state === 'error' ? 'bg-red-500/10 border-red-500/30 text-red-400' : ''}
         `}
       >
-        <span className={state === 'loading' ? 'animate-spin-slow' : ''}>
-          {state === 'loading' ? '⟳' : state === 'done' ? '✓' : state === 'error' ? '✕' : '🔄'}
+        <span className={state === 'loading' ? 'spin' : ''}>
+          {state === 'loading' ? '○' : state === 'done' ? '✓' : state === 'error' ? '✕' : '↻'}
         </span>
-        {state === 'loading' ? `Scraping ${source.charAt(0).toUpperCase() + source.slice(1)}…` : 'Refresh data'}
+        {state === 'loading'
+          ? `scraping ${source}...`
+          : 'refresh'
+        }
       </button>
       {message && (
-        <span className={`text-xs max-w-xs ${msgClasses[state]}`}>
+        <span className={`text-[11px] font-mono max-w-[200px] truncate ${
+          state === 'error' ? 'text-red-400' : state === 'done' ? 'text-emerald-400' : 'text-zinc-500'
+        }`}>
           {message}
         </span>
       )}

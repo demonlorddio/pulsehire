@@ -2,53 +2,45 @@ import { useEffect, useState } from 'react'
 import { listSources } from '../api'
 
 export default function FilterPanel({
-  days,
-  onDaysChange,
-  source,
-  onSourceChange,
-  skill,
-  onSkillChange,
+  days, onDaysChange,
+  source, onSourceChange,
+  skill, onSkillChange,
   skills,
 }) {
   const [sources, setSources] = useState([])
-  useEffect(() => {
-    listSources().then(setSources).catch(() => {})
-  }, [])
+  useEffect(() => { listSources().then(setSources).catch(() => {}) }, [])
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+    <div className="flex flex-wrap gap-5">
       <SelectField
-        icon="📅"
-        label="Time Window"
+        label="Window"
         value={days}
         onChange={(v) => onDaysChange(Number(v))}
         options={[
-          { value: 7, label: 'Last 7 days' },
-          { value: 14, label: 'Last 14 days' },
-          { value: 30, label: 'Last 30 days' },
-          { value: 90, label: 'Last 90 days' },
+          { value: 7, label: '7d' },
+          { value: 14, label: '14d' },
+          { value: 30, label: '30d' },
+          { value: 90, label: '90d' },
         ]}
       />
       <SelectField
-        icon="🌐"
         label="Source"
         value={source || ''}
         onChange={(v) => onSourceChange(v || null)}
         options={[
-          { value: '', label: 'All sources' },
+          { value: '', label: 'All' },
           ...sources.map((s) => ({ value: s.slug, label: s.name })),
         ]}
       />
       <SelectField
-        icon="🎯"
-        label="Skill (for trend)"
+        label="Skill"
         value={skill || ''}
         onChange={(v) => onSkillChange(v || null)}
         options={[
-          { value: '', label: 'Select a skill…' },
+          { value: '', label: 'None' },
           ...skills.map((s) => ({
             value: s.slug,
-            label: `${s.name}${s.is_emerging ? '  ✨' : ''}`,
+            label: s.is_emerging ? `${s.name} *` : s.name,
           })),
         ]}
       />
@@ -56,27 +48,22 @@ export default function FilterPanel({
   )
 }
 
-function SelectField({ icon, label, value, onChange, options }) {
+function SelectField({ label, value, onChange, options }) {
   return (
-    <label className="block group">
-      <span className="flex items-center gap-1.5 text-[11px] uppercase tracking-widest text-slate-500 font-medium mb-1.5">
-        <span className="text-xs">{icon}</span>
-        {label}
-      </span>
+    <label className="block">
+      <span className="mono-label mb-1.5 block">{label}</span>
       <select
-        className="w-full rounded-xl bg-slate-800/80 border border-slate-700/50 px-3 py-2.5 text-sm text-slate-200 
-                   focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/40
-                   hover:border-slate-600 transition-colors duration-200
-                   appearance-none cursor-pointer
-                   bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%2364748b%22%20d%3D%22M6%208L1%203h10z%22%2F%3E%3C%2Fsvg%3E')]
-                   bg-[length:12px] bg-[right_12px_center] bg-no-repeat pr-8"
+        className="glass-flat rounded-lg px-3 py-2 text-xs text-zinc-300 w-full
+                   focus:outline-none focus:ring-1 focus:ring-indigo-400/30
+                   hover:border-white/[0.08] transition-colors cursor-pointer
+                   appearance-none pr-7
+                   bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%2210%22%20viewBox%3D%220%200%2010%2010%22%3E%3Cpath%20fill%3D%22%2352525b%22%20d%3D%22M5%207L0%202h10z%22%2F%3E%3C%2Fsvg%3E')]
+                   bg-[length:10px] bg-[right_10px_center] bg-no-repeat font-mono"
         value={value}
         onChange={(e) => onChange(e.target.value)}
       >
         {options.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
+          <option key={opt.value} value={opt.value}>{opt.label}</option>
         ))}
       </select>
     </label>

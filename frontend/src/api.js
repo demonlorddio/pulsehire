@@ -57,3 +57,11 @@ export async function triggerRefresh({ source, query } = {}) {
   })
   return data
 }
+
+export async function secureParse({ jobTitle, jobDescription }) {
+  const { data } = await client.post('/api/secure/parse', {
+    job_title: jobTitle,
+    job_description: jobDescription,
+  }, { timeout: 30_000 })
+  return data
+}

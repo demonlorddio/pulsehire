@@ -16,7 +16,7 @@ DEFAULT_INTERVAL_MINUTES = 60
 
 def _run_scrape_job() -> None:
     """Background job: scrape Indeed for the default query."""
-    from scraper.indeed import scrape_indeed
+    from scraper.registry import get_scraper
     from scraper.skills import extract_skill_ids
     from database import db_session
     import services.jobs_service as jobs_service
@@ -35,7 +35,8 @@ def _run_scrape_job() -> None:
         try:
             scraped = 0
             new = 0
-            for raw in scrape_indeed(query=query, pages=pages):
+            scrape_fn = get_scraper(source)
+            for raw in scrape_fn(query=query, pages=pages):
                 scraped += 1
                 job_id = jobs_service.insert_job(
                     conn,

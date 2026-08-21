@@ -1,4 +1,4 @@
-"""FastAPI app — all 7 endpoints from README.md, plus CORS for the React frontend.
+"""FastAPI app — all API endpoints, plus CORS for the React frontend.
 
 Run from the project root:
     uvicorn backend.main:app --reload --port 8000
@@ -28,10 +28,20 @@ from database import db_session  # noqa: E402
 import services.skills_service as skills_service  # noqa: E402
 import services.jobs_service as jobs_service  # noqa: E402
 from scraper.registry import list_source_info  # noqa: E402
+from pydantic import BaseModel as _PydanticBase  # noqa: E402
+from services.secure_service import parse_in_enclave
+from scraper.bdata_scraper import run_bdata_scraper, heal_bdata_scraper, get_collector_id  # noqa: E402
 from models import (  # noqa: E402
     Job, RefreshResponse, Skill, SkillTrend, StatsResponse, TopSkill, TrendPoint,
 )
 
+
+
+
+# --- Request model for secure parse endpoint ---
+class SecureParseRequest(_PydanticBase):
+    job_title: str
+    job_description: str
 
 # ----- Scraper (lazy import — only loads if Bright Data key is present) -----
 
@@ -54,7 +64,7 @@ def _run_scrape_sync(source: str, query: Optional[str]) -> dict:
     with db_session() as conn:
         run_id = jobs_service.start_scrape_run(conn, source=source, query=query)
         skills = conn.execute("SELECT id, slug, name, aliases FROM skills").fetchall()
-        skills_by_slug = {s["slug"]: dict(s) for s in skills}
+        # skills loaded for extraction
 
         try:
             jobs_iter = scrape_fn(query=query)
@@ -122,12 +132,67 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[o.strip() for o in _origins_raw.split(",") if o.strip()],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type"],
 )
 
 
 # ----- Endpoints ------------------------------------------------------------
+
+
+
+@app.post("/api/bdata/run")
+async def bdata_run(
+    source: str = Query("indeed", description="Source: indeed, linkedin, glassdoor"),
+    url: str = Query("https://www.indeed.com/jobs?q=software+engineer", description="URL to scrape"),
+):
+    """Run a Bright Data Scraper Studio scraper via bdata CLI."""
+    collector_id = get_collector_id(source)
+    if not collector_id:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No Collector ID for source '{source}'. Run 'bdata scraper create' first."
+        )
+    try:
+        jobs = await asyncio.to_thread(run_bdata_scraper, collector_id, url)
+        return {"status": "ok", "source": source, "collector_id": collector_id, "jobs": jobs, "count": len(jobs)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/bdata/heal")
+async def bdata_heal(
+    source: str = Query("indeed"),
+    description: str = Query(..., description="What broke"),
+):
+    """Self-heal a broken scraper via bdata CLI."""
+    collector_id = get_collector_id(source)
+    if not collector_id:
+        raise HTTPException(status_code=404, detail=f"No Collector ID for source '{source}'")
+    try:
+        result = await asyncio.to_thread(heal_bdata_scraper, collector_id, description)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/health")
+def health_check():
+    """Health check — verify DB is reachable."""
+    try:
+        with db_session() as conn:
+            conn.execute("SELECT 1")
+        return {"status": "ok", "database": "connected"}
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Database unreachable: {e}")
+
+
+
+@app.post("/api/secure/parse")
+def secure_parse(req: SecureParseRequest):
+    """Parse a job posting inside a simulated TEE secure enclave."""
+    return parse_in_enclave(req.job_description, req.job_title)
+
 
 @app.get("/")
 def root():
@@ -202,17 +267,19 @@ async def refresh(source: str = Query("indeed"), query: Optional[str] = Query(No
             detail="Scraper not configured: BRIGHTDATA_API_KEY is missing. "
                    "Add it to your .env or use seed_sample_data.py for demo data.",
         )
+    started_at = datetime.now(timezone.utc).isoformat()
     try:
         result = await asyncio.to_thread(_run_scrape_sync, source, query)
     except RuntimeError as e:
         # Scraper module not implemented yet — surface as 503, not 500.
         raise HTTPException(status_code=503, detail=str(e)) from e
+    finished_at = datetime.now(timezone.utc).isoformat()
     return {
         "status": result["status"],
         "source": source,
         "query": query,
-        "started_at": datetime.now(timezone.utc).isoformat(),
-        "finished_at": datetime.now(timezone.utc).isoformat(),
+        "started_at": started_at,
+        "finished_at": finished_at,
         "jobs_scraped": result["jobs_scraped"],
         "jobs_new": result["jobs_new"],
         "error_message": None,

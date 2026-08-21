@@ -7,6 +7,7 @@ patterns so "react" doesn't match "reaction".
 from __future__ import annotations
 
 import re
+import json
 from typing import Any
 
 
@@ -39,7 +40,6 @@ def extract_skill_ids(text: str, skills: list[dict[str, Any]]) -> list[dict[str,
         if raw_aliases:
             if isinstance(raw_aliases, str):
                 # aliases stored as JSON string '["a","b"]'
-                import json
                 try:
                     aliases = json.loads(raw_aliases)
                 except (json.JSONDecodeError, TypeError):

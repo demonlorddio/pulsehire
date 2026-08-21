@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import TopSkillsChart from './TopSkillsChart'
 import SkillTrendChart from './SkillTrendChart'
 import FilterPanel from './FilterPanel'
 import RefreshButton from './RefreshButton'
 import { listSkills, getStats, triggerRefresh } from '../api'
 import JobList from './JobList'
+import FloatingParticles from './FloatingParticles'
 
 export default function Dashboard() {
   const [skills, setSkills] = useState([])
@@ -12,7 +13,9 @@ export default function Dashboard() {
   const [source, setSource] = useState(null)
   const [skill, setSkill] = useState(null)
   const [stats, setStats] = useState(null)
+  const [teeMode, setTeeMode] = useState(false)
   const [refreshTick, setRefreshTick] = useState(0)
+  
 
   useEffect(() => { listSkills().then(setSkills).catch(() => {}) }, [])
   useEffect(() => { getStats().then(setStats).catch(() => {}) }, [refreshTick])
@@ -26,11 +29,12 @@ export default function Dashboard() {
       <div className="max-w-[1600px] mx-auto flex flex-col lg:flex-row min-h-screen">
 
         {/* ═══════════════ LEFT SIDEBAR ═══════════════ */}
-        <aside className="lg:w-[320px] lg:min-h-screen lg:sticky lg:top-0 border-b lg:border-b-0 lg:border-r border-white/[0.04] flex flex-col">
-          <div className="p-6 lg:p-8 flex flex-col flex-1 stagger">
+        <aside className="lg:w-[320px] lg:min-h-screen lg:sticky lg:top-0 border-b lg:border-b-0 lg:border-r border-white/[0.04] flex flex-col relative overflow-hidden">
+          <div className="p-6 lg:p-8 flex flex-col flex-1 stagger relative">
+            <FloatingParticles />
 
             {/* Logo */}
-            <div className="mb-8">
+            <div className="mb-6">
               <h1 className="text-2xl font-extrabold tracking-tighter leading-none">
                 <span className="text-gradient">Pulse</span>
                 <span className="text-zinc-100">Hire</span>
@@ -38,8 +42,8 @@ export default function Dashboard() {
               <p className="mono-label mt-2">skill intelligence</p>
             </div>
 
-            {/* Live status */}
-            <div className="flex items-center gap-2 mb-8 pb-6 border-b border-white/[0.04]">
+            {/* Live status + Stats — at the top */}
+            <div className="flex items-center gap-2 mb-4 pb-4 border-b border-white/[0.04]">
               <span className="w-2 h-2 rounded-full bg-emerald-400 pulse-dot" />
               <span className="text-xs text-zinc-400 font-medium">Live</span>
               {lastRefreshed && (
@@ -49,8 +53,16 @@ export default function Dashboard() {
               )}
             </div>
 
+            {stats && (
+              <div className="mb-5 pb-4 border-b border-white/[0.04]">
+                <StatRow label="Total jobs" value={stats.total_jobs} />
+                <StatRow label="Skill mentions" value={stats.total_skill_mentions} />
+                <StatRow label="Skills tracked" value={stats.skills_tracked} />
+              </div>
+            )}
+
             {/* Filters */}
-            <div className="mb-8">
+            <div className="mb-4">
               <FilterPanel
                 days={days} onDaysChange={setDays}
                 source={source} onSourceChange={setSource}
@@ -61,7 +73,7 @@ export default function Dashboard() {
 
             {/* Naukri demo mode notice */}
             {source === 'naukri' && (
-              <div className="mb-6 rounded-lg bg-sky-500/[0.06] border border-sky-500/10 px-4 py-3">
+              <div className="mb-4 rounded-lg bg-sky-500/[0.06] border border-sky-500/10 px-4 py-3">
                 <p className="text-[11px] text-sky-300/80 leading-relaxed">
                   <span className="mr-1">&#x1F4A1;</span>
                   Naukri is currently operating in demo/mock mode.
@@ -70,20 +82,37 @@ export default function Dashboard() {
               </div>
             )}
 
-            {/* DB Stats */}
-            {stats && (
-              <div className="space-y-4 mt-auto">
-                <div className="border-t border-white/[0.04] pt-5">
-                  <StatRow label="Total jobs" value={stats.total_jobs} />
-                  <StatRow label="Skill mentions" value={stats.total_skill_mentions} />
-                  <StatRow label="Skills tracked" value={stats.skills_tracked} />
+            {/* Refresh + TEE — at the bottom */}
+            <div className="mt-auto pt-4 space-y-3">
+              <RefreshButton
+                onRefreshed={() => setRefreshTick((n) => n + 1)}
+                source={source || 'indeed'}
+              />
+
+              {/* TEE Secure Enclave Toggle */}
+              <div className="rounded-lg bg-emerald-500/[0.06] border border-emerald-500/10 px-4 py-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <svg className="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                    <span className="text-[11px] text-emerald-300/90 font-semibold uppercase tracking-wider">TEE Secure Enclave</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setTeeMode((v) => !v)}
+                    className={teeMode ? 'relative w-10 h-5 rounded-full bg-emerald-500/30 border border-emerald-400/40 transition-colors' : 'relative w-10 h-5 rounded-full bg-white/[0.06] border border-white/[0.08] transition-colors'}
+                  >
+                    <span className={teeMode ? 'absolute top-0.5 left-[22px] w-3.5 h-3.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.4)] transition-all' : 'absolute top-0.5 left-0.5 w-3.5 h-3.5 rounded-full bg-zinc-500 transition-all'} />
+                  </button>
                 </div>
-                <RefreshButton
-                  onRefreshed={() => setRefreshTick((n) => n + 1)}
-                  source={source || 'indeed'}
-                />
+                {teeMode && (
+                  <p className="text-[10px] text-emerald-400/60 mt-2 font-mono">
+                    Privacy-First Mode Active: Parsing isolated in secure hardware enclave.
+                  </p>
+                )}
               </div>
-            )}
+            </div>
           </div>
         </aside>
 
@@ -116,7 +145,7 @@ export default function Dashboard() {
           </div>
 
           {/* Job Listings */}
-          <JobList skill={skill} source={source} limit={5} onRefresh={() => triggerRefresh({ source: source || "indeed" }).then(() => setRefreshTick(n => n + 1))} />
+          <JobList skill={skill} source={source} limit={50} teeMode={teeMode} onRefresh={() => triggerRefresh({ source: source || "indeed" }).then(() => setRefreshTick(n => n + 1))} />
 
           {/* Footer */}
           <footer className="mt-16 pb-8 border-t border-white/[0.04] pt-6">

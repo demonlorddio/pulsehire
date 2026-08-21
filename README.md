@@ -3,6 +3,9 @@
 > **Real-time pulse of the tech job market.**
 > *Stop guessing. Start tracking.*
 
+[![Tests](https://img.shields.io/badge/tests-11%20passing-brightgreen)]()
+[![Lint](https://img.shields.io/badge/ruff-ready-blue)]()
+[![BrightData](https://img.shields.io/badge/bright%20data-web_unlocker+%2B+dataset-orange)]()
 [![Hackathon](https://img.shields.io/badge/hackathon-MVP-blueviolet)]()
 [![Python](https://img.shields.io/badge/python-3.10+-blue)]()
 [![FastAPI](https://img.shields.io/badge/backend-FastAPI-009688)]()
@@ -48,9 +51,17 @@ PulseHire is a dashboard that tracks how often specific tech skills (like *"Agen
 
 > _(Add screenshots of your dashboard here once built — `docs/screenshots/` folder)_
 
-| Dashboard | Skill Trend |
+| Dashboard Overview | Top Skills Chart |
 |---|---|
-| ![dashboard](docs/screenshots/dashboard.png) | ![trend](docs/screenshots/trend.png) |
+| ![dashboard](docs/screenshots/01-dashboard-overview.png) | ![top-skills](docs/screenshots/02-top-skills-chart.png) |
+
+| Skill Trend | Job Listings |
+|---|---|
+| ![trend](docs/screenshots/03-skill-trend.png) | ![jobs](docs/screenshots/04-job-listings.png) |
+
+| TEE Secure Enclave | Full Page |
+|---|---|
+| ![tee](docs/screenshots/05-tee-badges.png) | ![full](docs/screenshots/06-full-page.png) |
 
 ---
 

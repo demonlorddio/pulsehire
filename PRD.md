@@ -89,7 +89,7 @@ Build a **live dashboard** that tracks how often specific tech skills (e.g., "Ag
 - **1–2 job sources** (start with Indeed public listings)
 - **1 skill-extraction method:** keyword list of ~30 known tech skills
 - **SQLite database** for storing job postings + skill counts
-- **Streamlit dashboard** with:
+- **React + Recharts + Tailwind dashboard** with:
   - Bar chart: Top 10 skills by mention count
   - Line chart: A skill's trend over the last 30 days
   - Filter: by skill name and/or location
@@ -127,8 +127,8 @@ Build a **live dashboard** that tracks how often specific tech skills (e.g., "Ag
 - **Language:** Python 3.10+
 - **Scraping:** `requests` + `BeautifulSoup4`
 - **Data:** `pandas` + `SQLite`
-- **Dashboard:** `Streamlit`
-- **Charts:** `matplotlib` or `plotly` (Streamlit has built-ins)
+- **Dashboard:** React 18 + Vite + Tailwind CSS
+- **Charts:** Recharts (React)
 
 ### Data Model (SQLite)
 ```sql
@@ -152,7 +152,7 @@ skill_mentions (id, job_id, skill, mentioned_at)
 
 | Phase | Time | Deliverable |
 |---|---|---|
-| 🟢 Setup | 0–2h | Folder structure, libraries installed, "Hello World" Streamlit |
+| 🟢 Setup | 0–2h | Folder structure, libraries installed, "Hello World" frontend + backend |
 | 🟡 Scraper | 2–8h | Pulls 50+ jobs from Indeed successfully |
 | 🟡 Storage | 8–10h | Saves jobs + skills to SQLite |
 | 🟡 Dashboard | 10–16h | Charts working, filters working |
@@ -167,7 +167,7 @@ skill_mentions (id, job_id, skill, mentioned_at)
 |---|---|
 | Getting blocked by job sites | Add `time.sleep(2)`, rotate user-agents, respect `robots.txt` |
 | Scraper breaks mid-hackathon | Build scraper for **1 site only**; keep code simple |
-| Not enough time for charts | Use Streamlit built-in `st.bar_chart`, `st.line_chart` |
+| Not enough time for charts | Recharts renders fast with pre-aggregated data |
 | Empty database on first run | Pre-seed with sample data so demo always works |
 | Judge asks "is this accurate?" | Be honest: it's a **pulse**, not ground truth |
 
@@ -183,6 +183,6 @@ skill_mentions (id, job_id, skill, mentioned_at)
 
 - [x] Project name: **PulseHire**
 - [x] MVP scope: **1 scraper + 1 dashboard + 30 skills + SQLite**
-- [x] Stack: **Python + Streamlit + SQLite**
+- [x] Stack: **Python + React + Tailwind + SQLite**
 - [x] Out-of-scope items clearly listed
 - [x] Realistic for a beginner in 24 hours

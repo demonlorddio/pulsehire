@@ -1,7 +1,6 @@
 """Indeed scraper — hybrid approach: Web Unlocker search + Dataset API structured data."""
 from __future__ import annotations
 
-import re
 import time
 from typing import Iterator
 from urllib.parse import quote_plus

@@ -20,7 +20,7 @@ class Skill(BaseModel):
     id: int
     name: str
     slug: str
-    category: SkillCategory
+    category: str
     is_emerging: bool
     aliases: Optional[list[str]] = None
 

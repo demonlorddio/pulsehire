@@ -1,0 +1,22 @@
+services:
+  # Backend API
+  - type: web
+    name: pulsehire-api
+    runtime: python
+    plan: free
+    buildCommand: cd backend && pip install -r requirements.txt
+    startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port 0
+    envVars:
+      - key: BRIGHTDATA_API_KEY
+        sync: false
+      - key: BRIGHTDATA_ZONE
+        sync: false
+      - key: TEE_ENCLAVE_SECRET
+        sync: false
+      - key: DATABASE_PATH
+        value: data/pulsehire.db
+      - key: FRONTEND_URL
+        value: https://pulsehire-frontend.onrender.com
+      - key: PYTHON_VERSION
+        value: 3.11.0
+    healthCheckPath: /api/health

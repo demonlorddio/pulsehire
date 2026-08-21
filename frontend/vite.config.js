@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vitejs.dev/config/
+// https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
   server: {
@@ -13,5 +13,13 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
+  },
+  // In production, API calls go to the backend URL
+  define: {
+    'import.meta.env.VITE_API_URL': JSON.stringify(
+      process.env.NODE_ENV === 'production' 
+        ? (process.env.VITE_API_URL || '/')
+        : '/'
+    ),
   },
 })

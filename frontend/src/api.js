@@ -2,9 +2,10 @@ import axios from 'axios'
 
 // Vite proxy forwards /api/* to http://localhost:8000 (see vite.config.js).
 // Use relative URLs so the proxy works in dev and prod without code changes.
+const API_BASE = import.meta.env.VITE_API_URL || '/'
 const client = axios.create({
-  baseURL: '/',
-  timeout: 10_000,
+  baseURL: API_BASE,
+  timeout: 30_000,
 })
 
 export async function getTopSkills({ limit = 10, days = 30, source } = {}) {

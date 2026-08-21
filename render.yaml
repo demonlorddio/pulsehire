@@ -4,8 +4,8 @@ services:
     name: pulsehire-api
     runtime: python
     plan: free
-    buildCommand: cd backend && pip install -r requirements.txt && python init_db.py
-    startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port 0
+    buildCommand: cd backend && pip install -r requirements.txt
+    startCommand: cd backend && python init_db.py && uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: BRIGHTDATA_API_KEY
         sync: false

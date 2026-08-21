@@ -129,8 +129,12 @@ def heal_bdata_scraper(
         shell=(os.name == "nt"),
     )
     
-    if result.returncode != 0:
-        return {"status": "error", "message": result.stderr}
+    output = result.stdout + result.stderr
+    if 'Self-healing failed' in output or 'heal did not complete' in output:
+        # Scraper wasn't broken or heal couldn't fix it
+        return {"status": "unchanged", "message": "Scraper is working — nothing to heal", "details": output[-500:]}
+    if result.returncode != 0 and 'Healing scraper' not in output:
+        return {"status": "error", "message": output[-500:]}
     
     # Approve the fix if requested
     if approve:

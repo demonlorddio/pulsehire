@@ -30,7 +30,8 @@ import services.jobs_service as jobs_service  # noqa: E402
 from scraper.registry import list_source_info  # noqa: E402
 from pydantic import BaseModel as _PydanticBase  # noqa: E402
 from services.secure_service import parse_in_enclave
-from scraper.bdata_scraper import run_bdata_scraper, heal_bdata_scraper, get_collector_id  # noqa: E402
+from scraper.bdata_scraper import run_bdata_scraper, heal_bdata_scraper, get_collector_id
+from scraper.background_scraper import start_background_scraper  # noqa: E402
 from models import (  # noqa: E402
     Job, RefreshResponse, Skill, SkillTrend, StatsResponse, TopSkill, TrendPoint,
 )
@@ -109,6 +110,13 @@ def _run_scrape_sync(source: str, query: Optional[str]) -> dict:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup: start the scraper scheduler. Shutdown: nothing to clean up."""
+    # Start background scraper — silently collects data every 30 min
+    try:
+        start_background_scraper()
+        print("[bg-scraper] Background scraper initialized")
+    except Exception as e:
+        print(f"[bg-scraper] Failed to start: {e}")
+
     if os.getenv("ENABLE_SCHEDULER", "false").lower() == "true":
         try:
             from scraper.scheduler import start_scheduler

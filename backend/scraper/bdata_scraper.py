@@ -26,6 +26,7 @@ _COLLECTOR_IDS = {
     "indeed": os.getenv("BDATA_COLLECTOR_INDEED", ""),
     "linkedin": os.getenv("BDATA_COLLECTOR_LINKEDIN", ""),
     "glassdoor": os.getenv("BDATA_COLLECTOR_GLASSDOOR", ""),
+    "remoteok": os.getenv("BDATA_COLLECTOR_REMOTEOK", ""),
 }
 
 
@@ -68,6 +69,8 @@ def run_bdata_scraper(
             trigger_cmd,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=timeout,
             env=run_env,
             shell=(os.name == "nt"),  # Required on Windows
@@ -124,6 +127,8 @@ def heal_bdata_scraper(
         heal_cmd,
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="replace",
         timeout=300,
         env=run_env,
         shell=(os.name == "nt"),
@@ -146,6 +151,8 @@ def heal_bdata_scraper(
             approve_cmd,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=60,
             env=run_env,
             shell=(os.name == "nt"),
@@ -216,6 +223,7 @@ def _normalize_bdata_record(record: dict) -> Optional[dict]:
         or record.get("link")
         or record.get("job_url")
         or record.get("apply_link")
+        or record.get("product_page_url")
         or ""
     )
     
@@ -234,13 +242,18 @@ def _normalize_bdata_record(record: dict) -> Optional[dict]:
         or None
     )
     
-    description = (
-        record.get("description")
-        or record.get("job_description")
-        or record.get("summary")
-        or record.get("job_summary")
-        or None
-    )
+    # Tech stack / skills from bdata
+    tech_stack = record.get("tech_stack") or []
+    if tech_stack and isinstance(tech_stack, list):
+        description = "Skills: " + ", ".join(tech_stack[:10])
+    else:
+        description = (
+            record.get("description")
+            or record.get("job_description")
+            or record.get("summary")
+            or record.get("job_summary")
+            or None
+        )
     
     posted_date = (
         record.get("posted_date")

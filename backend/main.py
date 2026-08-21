@@ -109,7 +109,15 @@ def _run_scrape_sync(source: str, query: Optional[str]) -> dict:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Startup: start the scraper scheduler. Shutdown: nothing to clean up."""
+    """Startup: init DB, start scraper scheduler. Shutdown: nothing to clean up."""
+    # Auto-create tables if they don't exist
+    try:
+        from init_db import init_db
+        init_db()
+        print("[startup] Database tables verified")
+    except Exception as e:
+        print(f"[startup] DB init warning: {e}")
+
     # Start background scraper — silently collects data every 30 min
     try:
         start_background_scraper()

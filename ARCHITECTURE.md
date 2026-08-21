@@ -62,11 +62,17 @@
                            │
 ┌──────────────────────────┴──────────────────────────────────┐
 │                  SCRAPER  (Python)                          │
-│   ┌────────────┐  ┌────────────┐  ┌────────────────────┐   │
-│   │ Indeed.py  │  │ Naukri.py  │  │   skills.py        │   │
-│   │ Scrapes    │  │ (stretch)  │  │  Keyword matcher   │   │
-│   │ job posts  │  │            │  │                    │   │
-│   └─────┬──────┘  └─────┬──────┘  └─────────┬──────────┘   │
+│   ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌──────────┐   │
+│   │ Indeed.py  │  │ LinkedIn   │  │ Glassdoor  │  │ RemoteOK │   │
+│   │ Web Unlock │  │ Web Unlock │  │ Web Unlock │  │ Web Unlk │   │
+│   │ + Dataset  │  │ + Dataset  │  │ + Dataset  │  │          │   │
+│   └─────┬──────┘  └─────┬──────┘  └─────┬──────┘  └────┬─────┘   │
+│         │  Dice │ Wellfound │ SimplyHired │ Naukri       │         │
+│         └───────┴───────────┴─────────────┴──────────────┘         │
+│   ┌──────────────────────────────────────────────────────┐         │
+│   │  skills.py (keyword matcher)  │  bdata_scraper.py    │         │
+│   │  Extracts 30 tracked skills   │  Scraper Studio CLI  │         │
+│   └──────────────────────────────┘                       │         │
 │         └───────┬───────┘                    │              │
 │                 ▼                            │              │
 │        ┌─────────────────┐                   │              │

@@ -10,7 +10,6 @@ from typing import Literal, Optional
 
 from pydantic import BaseModel, Field
 
-SkillCategory = Literal["language", "frontend", "backend", "ai-ml", "devops", "database", "mobile", "emerging"]
 ScrapeStatus = Literal["running", "ok", "failed"]
 
 

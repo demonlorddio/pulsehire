@@ -5,7 +5,6 @@ Used by main.py's lifespan hook when ENABLE_SCHEDULER=true in .env.
 from __future__ import annotations
 
 import os
-import time
 from datetime import datetime, timezone
 
 from apscheduler.schedulers.background import BackgroundScheduler

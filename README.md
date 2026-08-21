@@ -350,16 +350,22 @@ in the Software without restriction...
 
 ## 👥 Authors
 
-- **Your Name** — *Initial work* — [@yourhandle](https://github.com/yourhandle)
+- **PulseHire Team** — *Built during Into the Scrape-Verse Hackathon*
 
-Built during **\[Hackathon Name\] · 2026**
+Built during **Into the Scrape-Verse · 2026**
+
+---
+
+## 🤖 AI Disclosure
+
+This project was built with the assistance of **Codebuff AI** (an AI coding assistant) as permitted under hackathon Rule 11. All code was reviewed, understood, and verified by the team.
 
 ---
 
 ## 🙏 Acknowledgments
 
 - Inspired by the pain of every student asking *"What should I learn next?"*
-- Thanks to **Indeed** and **Naukri** for public job listings
+- Thanks to **Bright Data** for Web Unlocker, Dataset API, and Scraper Studio
 - Built with ❤️ and a lot of `time.sleep(2)` to be polite to servers
 - Special thanks to the **FastAPI**, **React**, and **Tailwind CSS** communities
 

@@ -20,6 +20,13 @@ Build a **live dashboard** that tracks how often specific tech skills (e.g., "Ag
 - Provide a **single, unified view** across multiple job boards (no more tab-switching)
 - Make the data **refreshable** so trends feel current, not stale
 
+### Bright Data Integration
+- **Web Unlocker** — bypasses CAPTCHAs and anti-bot protection for live scraping
+- **Dataset API** — structured JSON from Indeed, LinkedIn, Glassdoor pre-built scrapers
+- **Scraper Studio** — AI-generated scrapers with self-healing capability (bdata CLI)
+
+---
+
 ### Non-Goals (Out of Scope for MVP)
 - User accounts / login
 - Email/Slack alerts
@@ -86,7 +93,7 @@ Build a **live dashboard** that tracks how often specific tech skills (e.g., "Ag
 ## 🧩 MVP Scope Definition
 
 ### In Scope ✅
-- **1–2 job sources** (start with Indeed public listings)
+- **4+ job sources** (Indeed, LinkedIn, Glassdoor, RemoteOK) via Bright Data
 - **1 skill-extraction method:** keyword list of ~30 known tech skills
 - **SQLite database** for storing job postings + skill counts
 - **React + Recharts + Tailwind dashboard** with:
@@ -127,7 +134,7 @@ Build a **live dashboard** that tracks how often specific tech skills (e.g., "Ag
 - **Language:** Python 3.10+
 - **Scraping:** `requests` + `BeautifulSoup4`
 - **Data:** `pandas` + `SQLite`
-- **Dashboard:** React 18 + Vite + Tailwind CSS
+- **Dashboard:** React 18 + Vite + Tailwind CSS + Recharts
 - **Charts:** Recharts (React)
 
 ### Data Model (SQLite)

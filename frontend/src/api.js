@@ -14,9 +14,9 @@ export async function getTopSkills({ limit = 10, days = 30, source } = {}) {
   return data
 }
 
-export async function getSkillTrend({ skill, days = 30 }) {
+export async function getSkillTrend({ skill, days = 30, source } = {}) {
   const { data } = await client.get('/api/skills/trend', {
-    params: { skill, days },
+    params: { skill, days, source },
   })
   return data
 }

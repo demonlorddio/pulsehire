@@ -126,6 +126,26 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         print(f"[bg-scraper] Failed to start: {e}")
 
+    # Auto-scrape on startup if DB is empty (Render wipes SQLite on restart)
+    try:
+        with db_session() as conn:
+            job_count = conn.execute("SELECT COUNT(*) FROM jobs").fetchone()[0]
+        if job_count == 0 and os.getenv("BRIGHTDATA_API_KEY"):
+            print("[startup] DB empty — scraping LinkedIn to populate data...")
+            def _startup_scrape():
+                queries = ["python developer", "react developer", "data engineer", "devops engineer"]
+                for q in queries:
+                    try:
+                        _run_scrape_sync("linkedin", q)
+                        print(f"[startup] Scraped: {q}")
+                    except Exception as e:
+                        print(f"[startup] Scrape failed for {q}: {e}")
+            asyncio.get_event_loop().run_in_executor(None, _startup_scrape)
+        else:
+            print(f"[startup] DB has {job_count} jobs — skipping auto-scrape")
+    except Exception as e:
+        print(f"[startup] Auto-scrape check failed: {e}")
+
     if os.getenv("ENABLE_SCHEDULER", "false").lower() == "true":
         try:
             from scraper.scheduler import start_scheduler

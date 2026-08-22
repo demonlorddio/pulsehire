@@ -19,6 +19,8 @@ services:
         value: https://pulsehire-frontend.onrender.com
       - key: RENDER_FRONTEND_URL
         value: https://pulsehire-1ktn.onrender.com
+      - key: ENABLE_SCHEDULER
+        value: "true"
       - key: PYTHON_VERSION
         value: 3.11.0
     healthCheckPath: /api/health

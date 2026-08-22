@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { triggerRefresh } from '../api'
 
-export default function RefreshButton({ onRefreshed, source = 'indeed' }) {
+export default function RefreshButton({ onRefreshed, source = 'linkedin' }) {
   const [state, setState] = useState('idle')
   const [message, setMessage] = useState('')
 

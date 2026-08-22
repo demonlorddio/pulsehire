@@ -187,7 +187,7 @@ app.add_middleware(
 
 @app.post("/api/bdata/run")
 async def bdata_run(
-    source: str = Query("indeed", description="Source: indeed, linkedin, glassdoor"),
+    source: str = Query("linkedin", description="Source: linkedin, arbeitnow, remotive, jobicy, remoteok"),
     url: str = Query("https://www.indeed.com/jobs?q=software+engineer", description="URL to scrape"),
 ):
     """Run a Bright Data Scraper Studio scraper via bdata CLI."""
@@ -253,7 +253,7 @@ def list_skills(category: Optional[str] = Query(None, description="Filter by cat
 def top_skills(
     limit: int = Query(10, ge=1, le=50),
     days: int = Query(30, ge=1, le=365),
-    source: Optional[str] = Query(None, description="Filter by source: 'indeed', 'naukri'"),
+    source: Optional[str] = Query(None, description="Filter by source: linkedin, arbeitnow, remotive, jobicy, remoteok"),
 ):
     rows = skills_service.top_skills(limit=limit, days=days, source=source)
     return [dict(r) for r in rows]
@@ -303,7 +303,7 @@ def stats():
 
 
 @app.post("/api/refresh", response_model=RefreshResponse)
-async def refresh(source: str = Query("indeed"), query: Optional[str] = Query(None)):
+async def refresh(source: str = Query("linkedin"), query: Optional[str] = Query(None)):
     """Trigger a fresh scrape for the given source (indeed, linkedin, glassdoor, etc.)."""
     if not os.getenv("BRIGHTDATA_API_KEY"):
         raise HTTPException(

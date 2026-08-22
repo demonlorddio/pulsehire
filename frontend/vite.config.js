@@ -14,11 +14,11 @@ export default defineConfig({
       },
     },
   },
-  // In production, API calls go to the backend URL
+  // In production, API calls go to the Render backend
   define: {
     'import.meta.env.VITE_API_URL': JSON.stringify(
-      process.env.NODE_ENV === 'production' 
-        ? (process.env.VITE_API_URL || '/')
+      process.env.NODE_ENV === 'production'
+        ? (process.env.VITE_API_URL || 'https://pulsehire-api.onrender.com')
         : '/'
     ),
   },

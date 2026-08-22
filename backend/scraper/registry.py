@@ -20,19 +20,8 @@ def list_sources() -> list[str]:
     return list(_REGISTRY.keys())
 
 def list_source_info() -> list[dict]:
-    """Return only sources that have at least 1 job in the DB."""
-    try:
-        import sqlite3, os
-        db_path = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'pulsehire.db')
-        conn = sqlite3.connect(db_path)
-        rows = conn.execute(
-            "SELECT source, COUNT(*) as cnt FROM jobs GROUP BY source HAVING cnt > 0"
-        ).fetchall()
-        conn.close()
-        active = {r[0] for r in rows}
-        return [{"slug": s, "name": n} for s, (_, n) in _REGISTRY.items() if s in active]
-    except Exception:
-        return [{"slug": s, "name": n} for s, (_, n) in _REGISTRY.items()]
+    """Return all registered sources."""
+    return [{"slug": s, "name": n} for s, (_, n) in _REGISTRY.items()]
 
 def _load_all():
     import scraper.indeed

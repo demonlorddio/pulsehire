@@ -142,8 +142,12 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS — allow the React dev server.
-_origins_raw = os.getenv("FRONTEND_URL", "http://localhost:5173") + "," + os.getenv("RENDER_EXTERNAL_URL", "")
+# CORS — allow the React dev server and Render deployments.
+_origins_raw = (
+    os.getenv("FRONTEND_URL", "http://localhost:5173")
+    + "," + os.getenv("RENDER_EXTERNAL_URL", "")
+    + "," + os.getenv("RENDER_FRONTEND_URL", "")
+)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[o.strip() for o in _origins_raw.split(",") if o.strip()],

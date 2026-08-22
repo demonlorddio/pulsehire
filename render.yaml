@@ -4,8 +4,8 @@ services:
     name: pulsehire-api
     runtime: python
     plan: free
-    buildCommand: cd backend && pip install -r requirements.txt && python init_db.py
-    startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
+    buildCommand: cd backend && pip install -r requirements.txt
+    startCommand: cd backend && python -c "from init_db import init_db; init_db()" && uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: BRIGHTDATA_API_KEY
         sync: false
@@ -17,6 +17,8 @@ services:
         value: data/pulsehire.db
       - key: FRONTEND_URL
         value: https://pulsehire-frontend.onrender.com
+      - key: RENDER_FRONTEND_URL
+        value: https://pulsehire-1ktn.onrender.com
       - key: PYTHON_VERSION
         value: 3.11.0
     healthCheckPath: /api/health

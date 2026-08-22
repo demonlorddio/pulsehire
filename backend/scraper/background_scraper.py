@@ -121,9 +121,15 @@ def _run_background_cycle():
 def start_background_scraper(interval: int = SCRAPE_INTERVAL):
     """Start the background scraper in a daemon thread.
     
+    Only runs if ENABLE_SCHEDULER=true (disabled on Render to save credits).
+    
     Args:
         interval: Seconds between scrape cycles (default 30 min)
     """
+    import os as _os
+    if _os.getenv("ENABLE_SCHEDULER", "false").lower() != "true":
+        print("[bg-scraper] Disabled (set ENABLE_SCHEDULER=true to enable)")
+        return None
     import threading
 
     def _loop():

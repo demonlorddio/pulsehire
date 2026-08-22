@@ -133,13 +133,20 @@ async def lifespan(app: FastAPI):
             job_count = conn.execute("SELECT COUNT(*) FROM jobs").fetchone()[0]
         if job_count == 0 and os.getenv("BRIGHTDATA_API_KEY"):
             print("[startup] DB empty — scraping LinkedIn to populate data...")
-            queries = ["python developer", "react developer", "data engineer", "devops engineer"]
-            for q in queries:
+            # LinkedIn (Bright Data)
+            for q in ["python developer", "react developer", "data engineer", "devops engineer"]:
                 try:
                     _run_scrape_sync("linkedin", q)
-                    print(f"[startup] Scraped: {q}")
+                    print(f"[startup] LinkedIn: {q}")
                 except Exception as e:
-                    print(f"[startup] Scrape failed for {q}: {e}")
+                    print(f"[startup] LinkedIn failed for {q}: {e}")
+            # Free API sources (no auth needed)
+            for src in ["arbeitnow", "remotive", "jobicy", "remoteok"]:
+                try:
+                    _run_scrape_sync(src, "python")
+                    print(f"[startup] {src}: done")
+                except Exception as e:
+                    print(f"[startup] {src} failed: {e}")
             print("[startup] Auto-scrape complete")
         else:
             print(f"[startup] DB has {job_count} jobs — skipping auto-scrape")

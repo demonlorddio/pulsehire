@@ -16,16 +16,27 @@ function formatDate(dateStr) {
 
 function groupJobsByDate(jobs) {
   const g = {}; const now = new Date()
+  const order = ['Today', 'Yesterday', 'This Week', 'This Month', '2-3 Months Ago', 'Older']
   jobs.forEach(j => {
-    let l = 'No date'
+    let l = 'Older'
     if (j.posted_date) {
       const d = new Date(j.posted_date)
-      if (!isNaN(d)) { const dd = Math.floor((now - d) / 86400000); if (dd <= 1) l = 'Today / Yesterday'; else if (dd <= 7) l = 'This week'; else if (dd <= 30) l = 'This month'; else l = 'Older' }
-      else l = j.posted_date
+      if (!isNaN(d)) {
+        const dd = Math.floor((now - d) / 86400000)
+        if (dd <= 0) l = 'Today'
+        else if (dd === 1) l = 'Yesterday'
+        else if (dd <= 7) l = 'This Week'
+        else if (dd <= 30) l = 'This Month'
+        else if (dd <= 90) l = '2-3 Months Ago'
+        else l = 'Older'
+      }
     }
     if (!g[l]) g[l] = []; g[l].push(j)
   })
-  return g
+  // Sort groups by time order
+  const sorted = {}
+  order.forEach(k => { if (g[k]) sorted[k] = g[k] })
+  return sorted
 }
 
 function groupJobsBySource(jobs) {
@@ -34,7 +45,7 @@ function groupJobsBySource(jobs) {
   return g
 }
 
-const SC = { indeed:{bg:'bg-amber-400/10',text:'text-amber-400/90',border:'border-amber-400/20',icon:'iy'}, linkedin:{bg:'bg-blue-400/10',text:'text-blue-400/90',border:'border-blue-400/20',icon:'in'}, glassdoor:{bg:'bg-emerald-400/10',text:'text-emerald-400/90',border:'border-emerald-400/20',icon:'gd'}, naukri:{bg:'bg-sky-400/10',text:'text-sky-400/90',border:'border-sky-400/20',icon:'nk'}, dice:{bg:'bg-violet-400/10',text:'text-violet-400/90',border:'border-violet-400/20',icon:'dc'}, remoteok:{bg:'bg-teal-400/10',text:'text-teal-400/90',border:'border-teal-400/20',icon:'ro'} }
+const SC = { indeed:{bg:'bg-amber-400/10',text:'text-amber-400/90',border:'border-amber-400/20',icon:'iy'}, linkedin:{bg:'bg-blue-400/10',text:'text-blue-400/90',border:'border-blue-400/20',icon:'in'}, glassdoor:{bg:'bg-emerald-400/10',text:'text-emerald-400/90',border:'border-emerald-400/20',icon:'gd'}, naukri:{bg:'bg-sky-400/10',text:'text-sky-400/90',border:'border-sky-400/20',icon:'nk'}, dice:{bg:'bg-violet-400/10',text:'text-violet-400/90',border:'border-violet-400/20',icon:'dc'}, remoteok:{bg:'bg-teal-400/10',text:'text-teal-400/90',border:'border-teal-400/20',icon:'ro'}, arbeitnow:{bg:'bg-orange-400/10',text:'text-orange-400/90',border:'border-orange-400/20',icon:'an'}, remotive:{bg:'bg-cyan-400/10',text:'text-cyan-400/90',border:'border-cyan-400/20',icon:'rm'}, jobicy:{bg:'bg-pink-400/10',text:'text-pink-400/90',border:'border-pink-400/20',icon:'jc'} }
 const DS = {bg:'bg-zinc-400/10',text:'text-zinc-400/90',border:'border-zinc-400/20',icon:'??'}
 
 function HighlightedSnippet({ text, skill }) {

@@ -99,6 +99,7 @@ def _run_scrape_sync(source: str, query: Optional[str]) -> dict:
         except Exception as e:  # noqa: BLE001
             import traceback
             traceback.print_exc()
+            print(f"[scrape] FAILED source={source} query={query}: {type(e).__name__}: {e}")
             jobs_service.finish_scrape_run(
                 conn, run_id, status="failed", jobs_scraped=0, jobs_new=0, error=str(e)
             )

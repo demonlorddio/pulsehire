@@ -170,39 +170,22 @@ def _backfill_trend_data():
 
 # ----- App + lifecycle ------------------------------------------------------
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """Startup: init DB, start scraper scheduler. Shutdown: nothing to clean up."""
-    # Auto-create tables if they don't exist
-    try:
-        from init_db import init_db
-        init_db()
-        print("[startup] Database tables verified")
-    except Exception as e:
-        print(f"[startup] DB init warning: {e}")
-
-    # Start background scraper — silently collects data every 30 min
-    try:
-        start_background_scraper()
-        print("[bg-scraper] Background scraper initialized")
-    except Exception as e:
-        print(f"[bg-scraper] Failed to start: {e}")
-
-    # Auto-scrape on startup if DB is empty (Render wipes SQLite on restart)
-    # Runs synchronously BEFORE accepting requests to avoid SQLite lock contention
+def _do_startup_scrape():
+    """Run auto-scrape in a background thread. Does NOT block the port from opening."""
+    import time
+    # Small delay to let uvicorn bind the port first
+    time.sleep(2)
     try:
         with db_session() as conn:
             job_count = conn.execute("SELECT COUNT(*) FROM jobs").fetchone()[0]
         if job_count == 0 and os.getenv("BRIGHTDATA_API_KEY"):
             print("[startup] DB empty — scraping LinkedIn to populate data...")
-            # LinkedIn (Bright Data)
             for q in ["python developer", "react developer", "data engineer", "devops engineer"]:
                 try:
                     _run_scrape_sync("linkedin", q)
                     print(f"[startup] LinkedIn: {q}")
                 except Exception as e:
                     print(f"[startup] LinkedIn failed for {q}: {e}")
-            # Free API sources (no auth needed)
             for src in ["arbeitnow", "remotive", "jobicy", "remoteok"]:
                 try:
                     _run_scrape_sync(src, "python")
@@ -210,7 +193,6 @@ async def lifespan(app: FastAPI):
                 except Exception as e:
                     print(f"[startup] {src} failed: {e}")
             print("[startup] Auto-scrape complete")
-            # Backfill historical trend data
             try:
                 _backfill_trend_data()
             except Exception as e:
@@ -218,7 +200,32 @@ async def lifespan(app: FastAPI):
         else:
             print(f"[startup] DB has {job_count} jobs — skipping auto-scrape")
     except Exception as e:
-        print(f"[startup] Auto-scrape check failed: {e}")
+        print(f"[startup] Auto-scrape failed: {e}")
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Startup: init DB fast, yield to let uvicorn bind port, THEN scrape in background."""
+    # Auto-create tables if they don't exist (fast — no network)
+    try:
+        from init_db import init_db
+        init_db()
+        print("[startup] Database tables verified")
+    except Exception as e:
+        print(f"[startup] DB init warning: {e}")
+
+    # Start background scraper scheduler (fast — just registers timers)
+    try:
+        start_background_scraper()
+        print("[bg-scraper] Background scraper initialized")
+    except Exception as e:
+        print(f"[bg-scraper] Failed to start: {e}")
+
+    # Schedule auto-scrape in background thread — NOT blocking the port
+    import threading
+    t = threading.Thread(target=_do_startup_scrape, daemon=True)
+    t.start()
+    print("[startup] Auto-scrape scheduled in background (port is open)")
 
     if os.getenv("ENABLE_SCHEDULER", "false").lower() == "true":
         try:
@@ -227,6 +234,7 @@ async def lifespan(app: FastAPI):
             print("⏰ Scheduler started.")
         except Exception as e:  # noqa: BLE001
             print(f"⚠️ Scheduler failed to start: {e}")
+
     yield
 
 

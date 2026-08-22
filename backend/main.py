@@ -65,7 +65,7 @@ def _run_scrape_sync(source: str, query: Optional[str]) -> dict:
     with db_session() as conn:
         run_id = jobs_service.start_scrape_run(conn, source=source, query=query)
         skills = conn.execute("SELECT id, slug, name, aliases FROM skills").fetchall()
-        # skills loaded for extraction
+        conn.commit()  # commit the scrape_run entry immediately
 
         try:
             jobs_iter = scrape_fn(query=query)
@@ -90,8 +90,14 @@ def _run_scrape_sync(source: str, query: Optional[str]) -> dict:
                 day = datetime.now(timezone.utc).date().isoformat()
                 text = f"{raw.get('title','')}\n{raw.get('description','')}"
                 for skill in extract_skill_ids(text, skills):
-                    jobs_service.record_skill_mention(conn, job_id, skill["id"], mentioned_in="description")
-                    skills_service.bump_daily_count(conn, skill["id"], day, source, 1)
+                    try:
+                        jobs_service.record_skill_mention(conn, job_id, skill["id"], mentioned_in="description")
+                        skills_service.bump_daily_count(conn, skill["id"], day, source, 1)
+                    except Exception:
+                        pass  # skip FK errors on individual skill mentions
+                # Commit every 10 jobs to release the write lock periodically
+                if new % 10 == 0:
+                    conn.commit()
             jobs_service.finish_scrape_run(
                 conn, run_id, status="ok", jobs_scraped=scraped, jobs_new=new
             )

@@ -50,12 +50,16 @@ def insert_job(
     posted_date: Optional[str] = None,
 ) -> Optional[int]:
     """Insert a job, ignoring duplicates by URL. Returns the new id, or None if duplicate."""
+    # Check if URL already exists to avoid stale lastrowid from INSERT OR IGNORE
+    existing = conn.execute("SELECT id FROM jobs WHERE url = ?", (url,)).fetchone()
+    if existing:
+        return None
     cur = conn.execute(
-        "INSERT OR IGNORE INTO jobs (title, company, location, source, url, description, posted_date) "
+        "INSERT INTO jobs (title, company, location, source, url, description, posted_date) "
         "VALUES (?, ?, ?, ?, ?, ?, ?)",
         (title, company, location, source, url, description, posted_date),
     )
-    return cur.lastrowid or None
+    return cur.lastrowid
 
 
 def record_skill_mention(

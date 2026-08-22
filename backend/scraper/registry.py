@@ -24,13 +24,15 @@ def list_source_info() -> list[dict]:
     return [{"slug": s, "name": n} for s, (_, n) in _REGISTRY.items()]
 
 def _load_all():
-    import scraper.indeed
+    # Only import scrapers that actually return data via Web Unlocker
     import scraper.linkedin
-    import scraper.glassdoor
-    import scraper.dice
-    import scraper.remoteok
-    import scraper.simplyhired
-    import scraper.wellfound
-    import scraper.naukri
+    # These sources are SPA/protected and return 0 jobs:
+    # import scraper.indeed      # CAPTCHA blocked
+    # import scraper.glassdoor   # Timeout
+    # import scraper.dice        # SPA, no JS rendering
+    # import scraper.remoteok    # SPA, no JS rendering
+    # import scraper.simplyhired # SPA, no JS rendering
+    # import scraper.wellfound   # SPA, no JS rendering
+    # import scraper.naukri      # SPA, no JS rendering
 
 _load_all()

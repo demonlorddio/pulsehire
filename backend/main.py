@@ -133,13 +133,20 @@ async def lifespan(app: FastAPI):
         if job_count == 0 and os.getenv("BRIGHTDATA_API_KEY"):
             print("[startup] DB empty — scraping LinkedIn to populate data...")
             def _startup_scrape():
-                queries = ["python developer", "react developer", "data engineer", "devops engineer"]
-                for q in queries:
-                    try:
-                        _run_scrape_sync("linkedin", q)
-                        print(f"[startup] Scraped: {q}")
-                    except Exception as e:
-                        print(f"[startup] Scrape failed for {q}: {e}")
+                sources_queries = [
+                    ("linkedin", [
+                        "python developer", "react developer",
+                        "data engineer", "devops engineer",
+                        "software engineer", "machine learning engineer",
+                    ]),
+                ]
+                for source, queries in sources_queries:
+                    for q in queries:
+                        try:
+                            _run_scrape_sync(source, q)
+                            print(f"[startup] Scraped {source}: {q}")
+                        except Exception as e:
+                            print(f"[startup] {source} scrape failed for {q}: {e}")
             asyncio.get_event_loop().run_in_executor(None, _startup_scrape)
         else:
             print(f"[startup] DB has {job_count} jobs — skipping auto-scrape")

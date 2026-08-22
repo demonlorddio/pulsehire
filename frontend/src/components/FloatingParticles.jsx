@@ -88,7 +88,7 @@ export default function FloatingParticles() {
       y: pos.y + (Math.random() - 0.5) * 5,
       size: pos.size + Math.floor(Math.random() * 20 - 10),
       rotation: pos.rotation + Math.floor(Math.random() * 15 - 7),
-      opacity: 0.06 + Math.random() * 0.05,  // 6-11% — visible but not hiding content
+      opacity: 0.12 + Math.random() * 0.08,  // 12-20% — noticeably visible
       delay: i * 100,
     }))
 

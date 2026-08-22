@@ -86,7 +86,7 @@ export default function Dashboard() {
             <div className="mt-auto pt-4 space-y-3">
               <RefreshButton
                 onRefreshed={() => setRefreshTick((n) => n + 1)}
-                source={source || 'indeed'}
+                source={source || 'linkedin'}
               />
 
               {/* TEE Secure Enclave Toggle */}
@@ -145,7 +145,7 @@ export default function Dashboard() {
           </div>
 
           {/* Job Listings */}
-          <JobList skill={skill} source={source} limit={50} teeMode={teeMode} onRefresh={() => triggerRefresh({ source: source || "indeed" }).then(() => setRefreshTick(n => n + 1))} />
+          <JobList skill={skill} source={source} limit={50} teeMode={teeMode} onRefresh={() => triggerRefresh({ source: source || "linkedin" }).then(() => setRefreshTick(n => n + 1))} />
 
           {/* Footer */}
           <footer className="mt-16 pb-8 border-t border-white/[0.04] pt-6">

@@ -315,8 +315,11 @@ async def refresh(source: str = Query("indeed"), query: Optional[str] = Query(No
     try:
         result = await asyncio.to_thread(_run_scrape_sync, source, query)
     except RuntimeError as e:
-        # Scraper module not implemented yet — surface as 503, not 500.
         raise HTTPException(status_code=503, detail=str(e)) from e
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Scrape failed: {type(e).__name__}: {e}")
     finished_at = datetime.now(timezone.utc).isoformat()
     return {
         "status": result["status"],

@@ -26,7 +26,7 @@ _COLLECTOR_IDS = {
     "indeed": os.getenv("BDATA_COLLECTOR_INDEED", ""),
     "linkedin": os.getenv("BDATA_COLLECTOR_LINKEDIN", ""),
     "glassdoor": os.getenv("BDATA_COLLECTOR_GLASSDOOR", ""),
-    "remoteok": os.getenv("BDATA_COLLECTOR_REMOTEOK", ""),
+    "remoteok": os.getenv("BDATA_COLLECTOR_REMOTEOK", "c_mt61lafrqa337jx3z"),
 }
 
 

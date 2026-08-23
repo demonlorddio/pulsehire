@@ -1,22 +1,190 @@
 {
   "top_skills": [
-    { "skill_id": 1, "skill": "Python", "slug": "python", "count": 142 },
-    { "skill_id": 2, "skill": "JavaScript", "slug": "javascript", "count": 128 },
-    { "skill_id": 3, "skill": "React", "slug": "react", "count": 97 },
-    { "skill_id": 4, "skill": "TypeScript", "slug": "typescript", "count": 85 },
-    { "skill_id": 5, "skill": "Docker", "slug": "docker", "count": 72 }
+    {
+      "skill_id": 1,
+      "skill": "Python",
+      "slug": "python",
+      "count": 539
+    },
+    {
+      "skill_id": 2,
+      "skill": "AWS",
+      "slug": "aws",
+      "count": 338
+    },
+    {
+      "skill_id": 3,
+      "skill": "CI/CD",
+      "slug": "cicd",
+      "count": 318
+    },
+    {
+      "skill_id": 4,
+      "skill": "Kubernetes",
+      "slug": "kubernetes",
+      "count": 279
+    },
+    {
+      "skill_id": 5,
+      "skill": "Docker",
+      "slug": "docker",
+      "count": 256
+    },
+    {
+      "skill_id": 6,
+      "skill": "React",
+      "slug": "react",
+      "count": 198
+    },
+    {
+      "skill_id": 7,
+      "skill": "TypeScript",
+      "slug": "typescript",
+      "count": 167
+    },
+    {
+      "skill_id": 8,
+      "skill": "SQL",
+      "slug": "sql",
+      "count": 156
+    },
+    {
+      "skill_id": 9,
+      "skill": "Java",
+      "slug": "java",
+      "count": 142
+    },
+    {
+      "skill_id": 10,
+      "skill": "Node.js",
+      "slug": "nodejs",
+      "count": 128
+    }
   ],
   "trend": {
-    "skill": "Rust",
-    "slug": "rust",
+    "skill": "Python",
+    "slug": "python",
     "points": [
-      { "date": "2026-08-15", "count": 3 },
-      { "date": "2026-08-16", "count": 5 },
-      { "date": "2026-08-17", "count": 4 },
-      { "date": "2026-08-18", "count": 7 },
-      { "date": "2026-08-19", "count": 11 },
-      { "date": "2026-08-20", "count": 9 },
-      { "date": "2026-08-21", "count": 14 }
+      {
+        "date": "2026-07-23",
+        "count": 12
+      },
+      {
+        "date": "2026-07-24",
+        "count": 15
+      },
+      {
+        "date": "2026-07-25",
+        "count": 18
+      },
+      {
+        "date": "2026-07-26",
+        "count": 14
+      },
+      {
+        "date": "2026-07-27",
+        "count": 22
+      },
+      {
+        "date": "2026-07-28",
+        "count": 25
+      },
+      {
+        "date": "2026-07-29",
+        "count": 28
+      },
+      {
+        "date": "2026-07-30",
+        "count": 20
+      },
+      {
+        "date": "2026-07-31",
+        "count": 32
+      },
+      {
+        "date": "2026-08-01",
+        "count": 35
+      },
+      {
+        "date": "2026-08-02",
+        "count": 30
+      },
+      {
+        "date": "2026-08-03",
+        "count": 38
+      },
+      {
+        "date": "2026-08-04",
+        "count": 42
+      },
+      {
+        "date": "2026-08-05",
+        "count": 45
+      },
+      {
+        "date": "2026-08-06",
+        "count": 40
+      },
+      {
+        "date": "2026-08-07",
+        "count": 48
+      },
+      {
+        "date": "2026-08-08",
+        "count": 52
+      },
+      {
+        "date": "2026-08-09",
+        "count": 47
+      },
+      {
+        "date": "2026-08-10",
+        "count": 55
+      },
+      {
+        "date": "2026-08-11",
+        "count": 58
+      },
+      {
+        "date": "2026-08-12",
+        "count": 53
+      },
+      {
+        "date": "2026-08-13",
+        "count": 62
+      },
+      {
+        "date": "2026-08-14",
+        "count": 65
+      },
+      {
+        "date": "2026-08-15",
+        "count": 60
+      },
+      {
+        "date": "2026-08-16",
+        "count": 68
+      },
+      {
+        "date": "2026-08-17",
+        "count": 72
+      },
+      {
+        "date": "2026-08-18",
+        "count": 75
+      },
+      {
+        "date": "2026-08-19",
+        "count": 70
+      },
+      {
+        "date": "2026-08-20",
+        "count": 78
+      },
+      {
+        "date": "2026-08-21",
+        "count": 82
+      }
     ]
   },
   "jobs": [
@@ -27,28 +195,28 @@
       "location": "Remote",
       "source": "linkedin",
       "posted_date": "2 days ago",
-      "url": "https://linkedin.com/jobs/view/123456",
+      "url": "https://linkedin.com/jobs/view/senior-python-developer-stripe-123456",
       "description": "We are looking for a senior Python developer with experience in FastAPI, Docker, and PostgreSQL..."
     },
     {
       "id": 1028,
-      "title": "Rust Systems Engineer",
-      "company": "Cloudflare",
-      "location": "Austin, TX",
-      "source": "indeed",
+      "title": "Full Stack Engineer",
+      "company": "Vercel",
+      "location": "Remote",
+      "source": "remoteok",
       "posted_date": "1 week ago",
-      "url": "https://indeed.com/viewjob?jk=abc123",
-      "description": "Build high-performance network infrastructure in Rust with Tokio and async runtimes..."
+      "url": "https://remoteok.com/remote-jobs/123456",
+      "description": "React, Next.js, TypeScript, Node.js. Deploy at the edge with our platform..."
     },
     {
       "id": 1029,
-      "title": "Full Stack Developer",
-      "company": "Vercel",
+      "title": "DevOps Engineer",
+      "company": "Canonical",
       "location": "Remote",
-      "source": "glassdoor",
+      "source": "arbeitnow",
       "posted_date": "3 days ago",
-      "url": "https://glassdoor.com/job-listing/123",
-      "description": "React, Next.js, TypeScript, Node.js. Deploy at the edge with our platform..."
+      "url": "https://arbeitnow.com/job/devops-engineer-canonical-789",
+      "description": "Kubernetes, Docker, CI/CD pipelines, Terraform. Join our remote-first team..."
     }
   ],
   "secure_parse": {
@@ -57,9 +225,21 @@
     "attestation_signature": "sha256:a1b2c3d4e5f67890abcdef1234567890abcdef1234567890abcdef12345678",
     "timestamp": "2026-08-21T11:15:48Z",
     "matched_skills": [
-      { "id": 1, "name": "Python", "slug": "python" },
-      { "id": 11, "name": "FastAPI", "slug": "fastapi" },
-      { "id": 20, "name": "Docker", "slug": "docker" }
+      {
+        "id": 1,
+        "name": "Python",
+        "slug": "python"
+      },
+      {
+        "id": 11,
+        "name": "FastAPI",
+        "slug": "fastapi"
+      },
+      {
+        "id": 20,
+        "name": "Docker",
+        "slug": "docker"
+      }
     ],
     "pipeline": [
       "input_received",

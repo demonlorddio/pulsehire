@@ -22,6 +22,7 @@ PulseHire is a dashboard that tracks how often specific tech skills (like *"Agen
 - [🖼️ Screenshots](#-screenshots)
 - [🏗️ Architecture](#-architecture)
 - [🛠️ Tech Stack](#-tech-stack)
+- [🔌 How Bright Data Is Used](#-how-bright-data-is-used)
 - [📂 Project Structure](#-project-structure)
 - [🚀 Getting Started](#-getting-started)
 - [📜 Available Scripts](#-available-scripts)
@@ -40,16 +41,16 @@ PulseHire is a dashboard that tracks how often specific tech skills (like *"Agen
 - 📈 **Trend Line Charts** — track any skill's demand over the last 30 days
 - 🔍 **Smart Filters** — drill down by skill, location, or job board
 - 🔄 **One-Click Refresh** — manually trigger a fresh scrape
-- 🌐 **Multi-Source Aggregation** — combine data from multiple job boards
+- 🌐 **Multi-Source Aggregation** — combine data from LinkedIn, RemoteOK, Arbeitnow, Remotive, and Jobicy
 - 💾 **Persistent Storage** — SQLite keeps your historical data safe
 - ⚡ **Fast Charts** — pre-aggregated counts make dashboards load instantly
-- 🎨 **Beautiful UI** — Tailwind CSS, responsive, beginner-friendly
+- 🎨 **Beautiful UI** — Tailwind CSS, glassmorphism, responsive, dark theme
+- 🔒 **TEE Secure Enclave** — simulated Trusted Execution Environment for privacy-first skill extraction
+- 🧠 **Self-Healing Scrapers** — Bright Data Scraper Studio with automatic recovery
 
 ---
 
 ## 🖼️ Screenshots
-
-> _(Add screenshots of your dashboard here once built — `docs/screenshots/` folder)_
 
 | Dashboard Overview | Top Skills Chart |
 |---|---|
@@ -99,10 +100,8 @@ PulseHire uses a **decoupled 3-tier architecture**:
 - **Python 3.10+** — main language
 - **FastAPI** — modern, fast web framework
 - **SQLite** — lightweight database
-- **SQLAlchemy** *(optional)* — ORM
 - **BeautifulSoup4 + requests** — web scraping
 - **APScheduler** — scheduled scraping jobs
-- **Pandas** — data wrangling
 
 ### Frontend
 - **React 18** — UI library
@@ -111,10 +110,66 @@ PulseHire uses a **decoupled 3-tier architecture**:
 - **Recharts** — beautiful, composable charts
 - **Axios** — HTTP client
 
+### Bright Data Products Used
+- **Web Unlocker** — bypasses anti-bot protection on job sites
+- **Dataset API** — returns structured JSON from pre-built scrapers
+- **Scraper Studio** — AI-generated scrapers with self-healing capabilities
+
 ### Tooling
 - **Git** — version control
 - **VS Code** — recommended editor
 - **Postman / curl** — API testing
+
+---
+
+## 🔌 How Bright Data Is Used
+
+PulseHire uses **three Bright Data products** to scrape job listings:
+
+### 1. Web Unlocker (Primary Scraper)
+Used for **LinkedIn** — the most heavily protected job site. Web Unlocker bypasses CAPTCHAs, rate limits, and anti-bot protection to fetch raw HTML from LinkedIn search results.
+
+```python
+# backend/scraper/fetcher.py
+def fetch_html(url, timeout=120):
+    payload = {
+        "zone": "bright_data_web_unlocker",
+        "url": url,
+        "format": "json"
+    }
+    resp = requests.post("https://api.brightdata.com/request", json=payload, ...)
+    return resp.json()["body"]  # Raw HTML, anti-bot bypassed
+```
+
+### 2. Dataset API (Structured Data)
+After Web Unlocker fetches search results, the **Dataset API** extracts structured job data (title, company, location, URL) from LinkedIn's HTML without fragile parsing.
+
+```python
+# backend/scraper/linkedin.py
+dataset_url = "https://api.brightdata.com/datasets/v3/scrape"
+payload = {
+    "input": [{"url": job_url} for job_url in job_urls],
+    "dataset_id": "gd_lpfll7v5hcqtkxl6l"  # LinkedIn Jobs
+}
+resp = requests.post(dataset_url, json=payload, headers=headers)
+# Returns structured JSON: title, company, location, description
+```
+
+### 3. Scraper Studio (Self-Healing)
+Scraper Studio creates AI-generated scrapers that automatically recover when websites change their layout. If a scraper breaks, it self-heals by re-analyzing the page structure.
+
+```bash
+# Create a scraper for any job board
+bdata scraper create --urls "https://remoteok.com/remote-jobs"
+
+# Self-heal if it breaks
+bdata scraper heal --id <collector_id> --description "Page layout changed"
+```
+
+### Why This Matters
+- **LinkedIn** blocks normal scrapers with CAPTCHAs → Web Unlocker bypasses them
+- **HTML parsing breaks** when sites update → Dataset API returns structured JSON
+- **Scrapers degrade** over time → Scraper Studio self-heals automatically
 
 ---
 
@@ -136,12 +191,16 @@ pulsehire/
 │   ├── .env.example
 │   ├── services/
 │   │   ├── skills_service.py
-│   │   └── jobs_service.py
+│   │   ├── jobs_service.py
+│   │   └── secure_service.py
 │   ├── scraper/
 │   │   ├── __init__.py
-│   │   ├── indeed.py        # Indeed scraper
-│   │   ├── naukri.py        # (stretch) Naukri scraper
+│   │   ├── registry.py      # Scraper registry
+│   │   ├── linkedin.py      # LinkedIn (Web Unlocker + Dataset API)
+│   │   ├── api_sources.py   # Free APIs (RemoteOK, Arbeitnow, Remotive, Jobicy)
 │   │   ├── skills.py        # Skill extractor
+│   │   ├── fetcher.py       # Bright Data Web Unlocker wrapper
+│   │   ├── bdata_scraper.py # Scraper Studio integration
 │   │   └── scheduler.py     # APScheduler
 │   └── data/
 │       └── pulsehire.db     # SQLite file (auto-created)
@@ -161,227 +220,4 @@ pulsehire/
 │           ├── Dashboard.jsx
 │           ├── TopSkillsChart.jsx
 │           ├── SkillTrendChart.jsx
-│           ├── FilterPanel.jsx
-│           ├── RefreshButton.jsx
-│           └── JobList.jsx
-│
-└── docs/
-    ├── screenshots/
-    └── DEMO_SCRIPT.md
-```
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-Make sure you have these installed:
-
-- **Python 3.10+** → [python.org](https://python.org)
-- **Node.js 18+** → [nodejs.org](https://nodejs.org)
-- **Git** → [git-scm.com](https://git-scm.com)
-
-Check your versions:
-```bash
-python --version    # Python 3.10+
-node --version      # v18+
-npm --version       # v9+
-```
-
----
-
-### 🔧 Backend Setup
-
-```bash
-# 1. Navigate to backend
-cd backend
-
-# 2. Create a virtual environment
-python -m venv venv
-
-# 3. Activate it
-# On Windows:
-venv\Scripts\activate
-# On macOS/Linux:
-source venv/bin/activate
-
-# 4. Install dependencies
-pip install -r requirements.txt
-
-# 5. Initialize the database
-python init_db.py
-
-# 6. Start the server
-uvicorn main:app --reload --port 8000
-```
-
-✅ Backend running at **http://localhost:8000**
-📚 Auto-generated API docs at **http://localhost:8000/docs**
-
----
-
-### 🎨 Frontend Setup
-
-```bash
-# 1. Open a new terminal, navigate to frontend
-cd frontend
-
-# 2. Install dependencies
-npm install
-
-# 3. Start the dev server
-npm run dev
-```
-
-✅ Frontend running at **http://localhost:5173**
-
----
-
-### 🌱 (Optional) Seed Sample Data
-
-If you want to see the dashboard working **without** waiting for a real scrape:
-
-```bash
-cd backend
-python scraper/seed_sample_data.py
-```
-
-This inserts ~500 fake jobs across 30 skills with 30 days of history. Perfect for demos.
-
----
-
-## 📜 Available Scripts
-
-### Backend
-| Command | What it does |
-|---|---|
-| `uvicorn main:app --reload` | Start dev server with hot reload |
-| `python init_db.py` | Create tables + seed 30 skills |
-| `python scraper/seed_sample_data.py` | Insert demo data |
-| `python scraper/run_scrape.py` | Manually trigger a scrape |
-
-### Frontend
-| Command | What it does |
-|---|---|
-| `npm run dev` | Start dev server |
-| `npm run build` | Build for production |
-| `npm run preview` | Preview production build |
-| `npm run lint` | Run ESLint |
-
----
-
-## 🔌 API Endpoints
-
-Base URL: `http://localhost:8000`
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/skills/top?limit=10` | Top N skills by mention count |
-| `GET` | `/api/skills/trend?skill=rust&days=30` | Daily counts for a skill |
-| `GET` | `/api/skills/list` | All 30 tracked skills |
-| `GET` | `/api/jobs?skill=python&limit=20` | Sample jobs for a skill |
-| `GET` | `/api/locations` | Available locations |
-| `POST` | `/api/refresh` | Trigger a fresh scrape |
-| `GET` | `/api/stats` | DB stats + last refresh time |
-| `GET` | `/docs` | **Interactive API docs (Swagger UI)** |
-
-### Example Calls
-
-```bash
-# Get top 10 skills
-curl http://localhost:8000/api/skills/top?limit=10
-
-# Get Rust trend for last 30 days
-curl "http://localhost:8000/api/skills/trend?skill=rust&days=30"
-
-# Trigger a fresh scrape
-curl -X POST http://localhost:8000/api/refresh
-```
-
----
-
-## 🗄️ Database Schema
-
-5 tables — see [`DATABASE.md`](./DATABASE.md) for full details.
-
-| Table | Purpose |
-|---|---|
-| `jobs` | Raw scraped job postings |
-| `skills` | Master list of 30 tracked skills |
-| `skill_mentions` | Many-to-many: which job mentions which skill |
-| `daily_skill_counts` | Pre-aggregated daily counts (fast charts) |
-| `scrape_runs` | Logging for every scrape attempt |
-
----
-
-## 🤝 Contributing
-
-This is a hackathon project, but contributions are welcome!
-
-1. Fork the repo
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-### Code Style
-- **Python:** PEP 8, type hints encouraged
-- **JavaScript:** ESLint config (Airbnb style)
-- **Commits:** Conventional Commits (`feat:`, `fix:`, `docs:`)
-
----
-
-## 📄 License
-
-Distributed under the **MIT License**. See `LICENSE` for more info.
-
-```
-MIT License
-
-Copyright (c) 2026 PulseHire Contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction...
-```
-
----
-
-## 👥 Authors
-
-- **PulseHire Team** — *Built during Into the Scrape-Verse Hackathon*
-
-Built during **Into the Scrape-Verse · 2026**
-
----
-
-## 🤖 AI Disclosure
-
-This project was built with the assistance of **Codebuff AI** (an AI coding assistant) as permitted under hackathon Rule 11. All code was reviewed, understood, and verified by the team.
-
----
-
-## 🙏 Acknowledgments
-
-- Inspired by the pain of every student asking *"What should I learn next?"*
-- Thanks to **Bright Data** for Web Unlocker, Dataset API, and Scraper Studio
-- Built with ❤️ and a lot of `time.sleep(2)` to be polite to servers
-- Special thanks to the **FastAPI**, **React**, and **Tailwind CSS** communities
-
----
-
-## 📚 Additional Documentation
-
-- 📋 [Product Requirements (PRD)](./PRD.md)
-- 🏗️ [System Architecture](./ARCHITECTURE.md)
-- 🗄️ [Database Schema](./DATABASE.md)
-- 🎤 [Demo Script](./docs/DEMO_SCRIPT.md)
-
----
-
-<p align="center">
-  Made with ❤️ for the hackathon
-  <br>
-  <strong>PulseHire</strong> — <em>Stop guessing. Start tracking.</em>
-</p>
+│   

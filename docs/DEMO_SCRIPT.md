@@ -11,7 +11,8 @@ career decisions."
 
 ## Scene 2: Dashboard Walkthrough (15s)
 - Point to the **Top Skills** bar chart: "Here are the most in-demand
-  skills across 4 job boards — Indeed, LinkedIn, Glassdoor, and Naukri."
+  skills across 5 job boards — LinkedIn, RemoteOK, Arbeitnow, Remotive,
+  and Jobicy."
 - Point to the **metric strip**: total jobs, unique skills, sources.
 - "The data updates live when you hit Refresh."
 
@@ -32,9 +33,10 @@ career decisions."
 
 ## Scene 4: Live Scrape with Bright Data (20s)
 - Click the **Refresh** button.
-- "Behind the scenes, PulseHire uses Bright Data's Web Unlocker
-  to scrape Indeed and LinkedIn, then the Dataset API for
-  structured job data."
+- "Behind the scenes, PulseHire uses Bright Data Web Unlocker
+  to scrape LinkedIn, then the Dataset API for structured job data.
+  We also pull from 4 free job APIs — RemoteOK, Arbeitnow, Remotive,
+  and Jobicy."
 - Show new jobs appearing in the **Job Listings** section.
 - "Each job card shows title, company, location, and source."
 
@@ -45,7 +47,7 @@ career decisions."
 ## Scene 5: Multi-Source Filtering (10s)
 - Switch **Source** dropdown from "All" to "LinkedIn".
 - "Filter by any source — the charts and listings update instantly."
-- Switch to "Indeed" to show different data.
+- Switch to "RemoteOK" to show different data.
 
 **Show:** Charts re-rendering with source-specific data.
 
@@ -71,8 +73,9 @@ Stop guessing. Start tracking."
 ---
 
 ## Key Phrases to Mention
-- "Bright Data Web Unlocker bypasses anti-bot protection"
+- "Bright Data Web Unlocker bypasses anti-bot protection on LinkedIn"
 - "Dataset API returns structured JSON — no fragile HTML parsing"
+- "4 free job APIs provide additional data without API keys"
 - "TEE simulation shows how we'd handle PII in production"
 - "Students can see if a skill is growing before they invest time"
 - "All open-source, all local, all free"
